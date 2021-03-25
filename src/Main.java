@@ -1,4 +1,5 @@
 import LectureFichier.LectureNiveau;
+import LectureFichier.SauvegardeNiveau;
 import Niveau.Niveau;
 
 public class Main {
@@ -6,7 +7,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		Niveau niveau =leNiveau.lectureDuNiveau();
+		Niveau niveau = leNiveau.lectureDuNiveau();
 		
 		if (niveau != null) {
 			for (int j = 0; j < 25; j++) {
@@ -18,7 +19,8 @@ public class Main {
 			System.out.println(niveau.getMeilleurTempsEnSeconde());
 			System.out.println(niveau.getMeilleurScore());
 		}
-
+		
+		new SauvegardeNiveau("./fic/niveau1.txt", niveau);
 	}
 
 }
