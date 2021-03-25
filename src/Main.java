@@ -13,7 +13,7 @@ public class Main {
 				}
 				System.out.println();
 			}
-			leFichier.ecrireMap(map);
+			//leFichier.ecrireMap(map);
 		}
 
 	}
