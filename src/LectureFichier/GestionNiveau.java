@@ -5,7 +5,8 @@ import java.io.IOException;
 import Niveau.Niveau;
 
 /**
- * Class technique la classe gestion de niveau permet d'ouvrir et fermer des
+ * Class technique
+ * La classe gestion de niveau permet d'ouvrir et fermer des
  * fichiers de niveau. Le fichier peut être dans le désordre (les parties //MAP
  * //TEMPS //SCORE) dans l'ordre que l'on veut. Dans cette classe on peut ouvrir
  * un niveau grâce au nom du fichier et/ou l'enregistre grâce à son nom de
