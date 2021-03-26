@@ -1,13 +1,12 @@
-import LectureFichier.LectureNiveau;
-import LectureFichier.SauvegardeNiveau;
+import LectureFichier.GestionNiveau;
 import Niveau.Niveau;
 
 public class Main {
-	private static LectureNiveau leNiveau = new LectureNiveau("./fic/niveau1.txt");
+	private static GestionNiveau gestion = new GestionNiveau("./fic/niveau1.txt");
 
 	public static void main(String[] args) {
 		
-		Niveau niveau = leNiveau.lectureDuNiveau();
+		Niveau niveau = gestion.ouvrirNiveau();
 		
 		if (niveau != null) {
 			for (int j = 0; j < 25; j++) {
@@ -20,7 +19,7 @@ public class Main {
 			System.out.println(niveau.getMeilleurScore());
 		}
 		
-		new SauvegardeNiveau("./fic/niveau1.txt", niveau);
+		gestion.sauvegarderNiveau(niveau);
 	}
 
 }

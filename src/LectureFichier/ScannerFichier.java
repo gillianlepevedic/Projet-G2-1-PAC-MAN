@@ -4,19 +4,12 @@ import java.io.FileInputStream;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-public class LecteurDeLigne {
-	private String nomFichier;
+public class ScannerFichier {
 	private Scanner scannerDeFichier;
-	private FileInputStream fichier;
 	
-	public LecteurDeLigne(String nomfic) {
-		nomFichier = nomfic;
-	}
-	
-	void ouvrirFichier() {
+	public ScannerFichier(String nomfic) {
 		try {
-			fichier = new FileInputStream(nomFichier);
-			scannerDeFichier = new Scanner(fichier);
+			scannerDeFichier = new Scanner(new FileInputStream(nomfic));
 			
 		} catch (java.io.FileNotFoundException e) {
 			System.out.println("Erreur : Fichier introuvable");

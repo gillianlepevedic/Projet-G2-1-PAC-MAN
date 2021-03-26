@@ -5,19 +5,18 @@ import Niveau.Niveau;
 public class LectureNiveau {
 	private String nomFichier;
 	private Niveau niveau;
-	private LecteurDeLigne lecteur;
+	private ScannerFichier scannerDeFichier;
 	
 	public LectureNiveau(String nomfic) {
 		nomFichier = nomfic;
 	}
 	
 	public Niveau lectureDuNiveau() {
-		lecteur = new LecteurDeLigne(nomFichier);
-		lecteur.ouvrirFichier();	
+		scannerDeFichier = new ScannerFichier(nomFichier);
 		niveau = new Niveau();
 		try {
 			for (int i=0;i<2;i++) {
-				switch(lecteur.lectureLigne()) {
+				switch(scannerDeFichier.lectureLigne()) {
 				
 				case "//MAP": niveau.setMap(lectureMap());
 				break;
@@ -35,7 +34,7 @@ public class LectureNiveau {
 			niveau = null;
 		}
 		
-		lecteur.close();
+		scannerDeFichier.close();
 		return niveau;
 	}
 
@@ -46,7 +45,7 @@ public class LectureNiveau {
 		try {
 			
 			for (int largeur=0; largeur<Niveau.getLargeurMap(); largeur++ ) {
-				ligneString = lecteur.lectureLigne();
+				ligneString = scannerDeFichier.lectureLigne();
 				
 				if (ligneString.length() != Niveau.getLongueurMap()) {
 					throw new Exception("Erreur : La ligne " + ligneString + " n'est pas a la bonne taille");
@@ -67,9 +66,9 @@ public class LectureNiveau {
 	
 	private void lectureScore() {
 		try {
-			String ligneString = lecteur.lectureLigne();
+			String ligneString = scannerDeFichier.lectureLigne();
 			niveau.setMeilleurTempsEnSeconde(Integer.parseInt(ligneString));
-			ligneString = lecteur.lectureLigne();
+			ligneString = scannerDeFichier.lectureLigne();
 			niveau.setMeilleurScore(Integer.parseInt(ligneString));
 			
 		}catch(Exception e){
