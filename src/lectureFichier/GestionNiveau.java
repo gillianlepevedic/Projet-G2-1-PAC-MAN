@@ -1,24 +1,21 @@
-package LectureFichier;
+package lectureFichier;
 
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import Niveau.Niveau;
+
+import niveau.Niveau;
 
 /**
- * Class technique
- * La classe gestion de niveau permet d'ouvrir et fermer des
- * fichiers de niveau. Le fichier peut être dans le désordre (les parties //MAP
- * //TEMPS //SCORE) dans l'ordre que l'on veut. Dans cette classe on peut ouvrir
- * un niveau grâce au nom du fichier et/ou l'enregistre grâce à son nom de
- * fichier et le niveau à sauvegarder.
+ * Class technique La classe gestion de niveau permet de lire et/ou d'enregistre
+ * le fichier grâce à son nom de fichier. Elle verifie que le fichier corespond
+ * au norme.
  * 
  * @author gillian
  *
  */
-public class GestionNiveau {
-	private String nomFichier;
+public class GestionNiveau extends GestionFichier {
 	private Niveau niveau;
-	private ScannerFichier scannerDeFichier;
 
 	/**
 	 * Constructeur
@@ -26,37 +23,38 @@ public class GestionNiveau {
 	 * @param nomFichier
 	 */
 	public GestionNiveau(String nomFichier) {
-		this.nomFichier = nomFichier;
+		super(nomFichier);
+	}
+
+	public Niveau getNiveau() {
+		return niveau;
 	}
 
 	/**
-	 * Cette méthode permet de vérifier si le fichier ouvert correspond au critère
-	 * du jeu. Les entêtes, la taille de la map, la cohérence des valeurs, etc. Il
-	 * faut au minimum un map complet pour que la fonction renvoi un "niveau" non
-	 * null. Le score et le temps ne sont pas obligatoires dans le fichier. Si le
-	 * Score et le temps ne sont pas dans le fichier ma valeur 0 serat affecter aux
-	 * variables.
+	 * Cette méthode appelle la bonne methode en fonction de l'entete lu. Si un
+	 * partie obligatoire est ilisible la lecture est abandonée. Si une partie
+	 * optionnel est ilisible elle sera remplacer pas un zerp.
 	 * 
-	 * @return return le niveau lu dans le fichier qui porte le nom "nomFichier"
-	 *         declarer dans le constructeur.
+	 * @return return le Niveau lu dans le fichier qui porte le nom "nomFichier"
 	 */
-	public Niveau ouvrirNiveau() {
-		niveau = new Niveau();
+	public Niveau LectureNiveau() {
+		String id = null;
+		String nom = null;
+		boolean[][] map = null;
 
 		try {
-			scannerDeFichier = new ScannerFichier(nomFichier);
-			scannerDeFichier.getScannerDeFichier();
+			super.ouvrirFichier();
 			for (int i = 0; i < 3; i++) {
-				switch (scannerDeFichier.lectureLigne()) {
+				switch (super.lectureLigne()) {
 
+				case "//ID":
+					id = super.lectureID();
+					break;
+				case "//NOM":
+					nom = super.lectureNom();
+					break;
 				case "//MAP":
-					niveau.setMap(lectureMap());
-					break;
-				case "//TEMPS":
-					niveau.setMeilleurTempsEnSeconde(lectureTemps());
-					break;
-				case "//SCORE":
-					niveau.setMeilleurScore(lectureScore());
+					map = lectureMap();
 					break;
 				case "":
 					i--;
@@ -66,18 +64,52 @@ public class GestionNiveau {
 				}
 
 			}
-			System.out.println("Fin lecture niveau");
+			System.out.println("Fin lecture partie obligatoire");
 
-		} catch (Exception e) {
+		} catch (FileNotFoundException e) {
+			System.out.println("Erreur : impossible d'ouvrir le fichier");
 			System.out.println(e);
-			if (niveau.getMap() == null) {
-				niveau = null;
-			}
+		} catch (Exception e) {
+			System.out.println("Erreur : Partie obligatoire illisible");
+			System.out.println(e);
+			return null;
 		}
 
-		scannerDeFichier.close();
-		return niveau;
+		if (id != null && nom != null && map != null) {
+			this.niveau = new Niveau(id, nom, map);
+
+			try {
+
+				for (int i = 0; i < 2; i++) {
+					switch (super.lectureLigne()) {
+
+					case "//SCORE":
+						this.niveau.setMeilleurScore(super.lectureScore());
+						break;
+					case "//TEMPS":
+						this.niveau.setMeilleurTempsEnSeconde(super.lectureTemps());
+						break;
+					case "":
+						i--;
+						break;
+					default:
+						throw new Exception("Erreur : entete non reconu");
+					}
+
+				}
+				System.out.println("Fin lecture partie optionnel");
+
+			} catch (Exception e) {
+				System.out.println("Erreur : Partie optionnel illisible");
+				System.out.println(e);
+			}
+			System.out.println("Fin lecture");
+			super.fermerFichier();
+			System.out.println("Fichier fermer");
+		}
+		return this.niveau;
 	}
+
 
 	/**
 	 * Cette méthode est appelée si on rencontre les mots "//MAP". Elle lit le parti
@@ -93,7 +125,7 @@ public class GestionNiveau {
 		String ligneString;
 
 		for (int largeur = 0; largeur < Niveau.getLargeurMap(); largeur++) {
-			ligneString = scannerDeFichier.lectureLigne();
+			ligneString = super.lectureLigne();
 
 			if (ligneString == null) {
 				throw new Exception("Erreur : Ligne vide");
@@ -118,45 +150,9 @@ public class GestionNiveau {
 		return map;
 	}
 
-	/**
-	 * Cette méthode est appelée si on rencontre les mots "//TEMPS".
-	 * 
-	 * @return retourne le temps lu par le fichier sinon retourne 0
-	 */
-	private int lectureTemps() {
-		int temps;
-		try {
-			temps = Integer.parseInt(scannerDeFichier.lectureLigne());
-		} catch (Exception e) {
-			System.out.println("Erreur : lecture Score impossible");
-			System.out.println(e);
-			temps = 0;
-		}
 
-		return temps;
-	}
 
-	/**
-	 * Cette méthode est appelée si on rencontre les mots "//SCORE".
-	 * 
-	 * @return retourne le score lu par le fichier sinon retourne 0
-	 */
-	private int lectureScore() {
-		int score;
-		try {
-			score = Integer.parseInt(scannerDeFichier.lectureLigne());
 
-		} catch (NullPointerException e) {
-			System.out.println("Erreur : pas de Score");
-			System.out.println(e);
-			score = 0;
-		} catch (Exception e) {
-			System.out.println("Erreur : lecture Score impossible");
-			System.out.println(e);
-			score = 0;
-		}
-		return score;
-	}
 
 	/**
 	 * Cette méthode permet de sauvegarder le niveau passé en paramètre dans le
@@ -165,13 +161,19 @@ public class GestionNiveau {
 	 * 
 	 * @param niveau il serat envoyé dans le fichier "nomfichier"
 	 */
-	public void sauvegarderNiveau(Niveau niveau) {
+	public void sauvegarderNiveau() {
 		System.out.println("Debut ecriture");
 		viderFichier();
-		ecrireMap(niveau.getMap());
-		ecrireTemp(niveau.getMeilleurTempsEnSeconde());
-		ecrireScore(niveau.getMeilleurScore());
-		System.out.println("Fin ecriture");
+		try {
+			ecrireId(this.niveau.getId());
+			ecrireNom(this.niveau.getNom());
+			ecrireMap(this.niveau.getMap());
+			ecrireScore(this.niveau.getMeilleurScore());
+			ecrireTemp(this.niveau.getMeilleurTempsEnSeconde());
+			System.out.println("Fin ecriture");
+		} catch (Exception e) {
+
+		}
 	}
 
 	/**
@@ -186,57 +188,84 @@ public class GestionNiveau {
 	}
 
 	/**
+	 * Remplie le ficher avec l'id passer en parametre. Et ecrit une entête //ID
+	 * 
+	 * @param id qui sera ecrit dans le fichier
+	 * @throws IOException
+	 */
+	private void ecrireId(String id) throws IOException {
+		System.out.println("Ecriture id");
+		FileWriter lefichier = new FileWriter(super.nomFichier, true);
+		lefichier.write("//ID\n");
+		lefichier.write(id + "\n");
+		lefichier.close();
+	}
+
+	/**
+	 * Remplie le ficher avec l'nom passer en parametre. Et ecrit une entête //NOM
+	 * 
+	 * @param nom
+	 * @throws IOException
+	 */
+	private void ecrireNom(String nom) throws IOException {
+		System.out.println("Ecriture nom");
+		FileWriter lefichier = new FileWriter(super.nomFichier, true);
+		lefichier.write("//NOM\n");
+		lefichier.write(nom + "\n");
+		lefichier.close();
+	}
+
+	/**
 	 * Remplie le ficher avec la map sous forme de tableau. Avec un entête //MAP
 	 * 
 	 * @param map
+	 * @throws IOException
 	 */
-	private void ecrireMap(boolean[][] map) {
-		try (FileWriter lefichier = new FileWriter(nomFichier, true);) {
-			lefichier.write("//MAP\n");
-			for (int largeur = 0; largeur < Niveau.getLargeurMap(); largeur++) {
-				for (int longueur = 0; longueur < Niveau.getLongueurMap(); longueur++) {
-					if (map[largeur][longueur]) {
-						lefichier.write("1");
-					} else {
-						lefichier.write("0");
-					}
+	private void ecrireMap(boolean[][] map) throws IOException {
+		System.out.println("Ecriture map");
+		FileWriter lefichier = new FileWriter(super.nomFichier, true);
+		lefichier.write("//MAP\n");
+		for (int largeur = 0; largeur < Niveau.getLargeurMap(); largeur++) {
+			for (int longueur = 0; longueur < Niveau.getLongueurMap(); longueur++) {
+				if (map[largeur][longueur]) {
+					lefichier.write("1");
+				} else {
+					lefichier.write("0");
 				}
-				lefichier.write("\n");
 			}
-
-		} catch (IOException e) {
-			System.out.println("Erreur : Ecriture Map Impossible");
+			lefichier.write("\n");
 		}
+		lefichier.close();
 	}
 
 	/**
-	 * Remplie le ficher avec la map sous forme de tableau. Avec un entête //TEMPS
-	 * 
-	 * @param temps
-	 */
-	private void ecrireTemp(int temps) {
-		try (FileWriter lefichier = new FileWriter(nomFichier, true);) {
-			lefichier.write("//TEMPS\n");
-			lefichier.write(String.valueOf(temps) + "\n");
-
-		} catch (IOException e) {
-			System.out.println("Erreur : Ecriture Temps Imposible");
-		}
-
-	}
-
-	/**
-	 * Remplie le ficher avec la map sous forme de tableau. Avec un entête //SCORE
+	 * Remplie le ficher avec le score passer en parametre. Et ecrit une entête
+	 * //SCORE
 	 * 
 	 * @param score
+	 * @throws IOException
 	 */
-	private void ecrireScore(int score) {
-		try (FileWriter lefichier = new FileWriter(nomFichier, true);) {
-			lefichier.write("//SCORE\n");
-			lefichier.write(String.valueOf(score));
+	private void ecrireScore(int score) throws IOException {
+		System.out.println("Ecriture score");
+		FileWriter lefichier = new FileWriter(super.nomFichier, true);
+		lefichier.write("//SCORE\n");
+		lefichier.write(String.valueOf(score) + "\n");
+		lefichier.close();
+	}
 
-		} catch (IOException e) {
-			System.out.println("Erreur : Ecriture Score Imposible");
-		}
+	/**
+	 * Remplie le ficher avec le temps passer en parametre. Et ecrit une entête
+	 * //TEMPS
+	 * 
+	 * @param temps
+	 * @throws IOException
+	 */
+	private void ecrireTemp(int temps) throws IOException {
+		System.out.println("Ecriture temps");
+		FileWriter lefichier = new FileWriter(super.nomFichier, true);
+		lefichier.write("//TEMPS\n");
+		lefichier.write(String.valueOf(temps) + "\n");
+		lefichier.close();
+
 	}
 }
