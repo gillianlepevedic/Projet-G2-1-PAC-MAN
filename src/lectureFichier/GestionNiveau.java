@@ -24,6 +24,7 @@ public class GestionNiveau extends GestionFichier {
 	 */
 	public GestionNiveau(String nomFichier) {
 		super(nomFichier);
+		this.niveau = null;
 	}
 
 	public Niveau getNiveau() {
@@ -72,7 +73,7 @@ public class GestionNiveau extends GestionFichier {
 		} catch (Exception e) {
 			System.out.println("Erreur : Partie obligatoire illisible");
 			System.out.println(e);
-			return null;
+			this.niveau = null;
 		}
 
 		if (id != null && nom != null && map != null) {
@@ -109,7 +110,6 @@ public class GestionNiveau extends GestionFichier {
 		}
 		return this.niveau;
 	}
-
 
 	/**
 	 * Cette méthode est appelée si on rencontre les mots "//MAP". Elle lit le parti
@@ -150,10 +150,6 @@ public class GestionNiveau extends GestionFichier {
 		return map;
 	}
 
-
-
-
-
 	/**
 	 * Cette méthode permet de sauvegarder le niveau passé en paramètre dans le
 	 * fichier déclarer dans le constructeur. Le fichier est d'abord vidé. Puis
@@ -163,56 +159,17 @@ public class GestionNiveau extends GestionFichier {
 	 */
 	public void sauvegarderNiveau() {
 		System.out.println("Debut ecriture");
-		viderFichier();
+		super.vidageFichier();
 		try {
-			ecrireId(this.niveau.getId());
-			ecrireNom(this.niveau.getNom());
+			super.ecrireId(this.niveau.getId());
+			super.ecrireNom(this.niveau.getNom());
 			ecrireMap(this.niveau.getMap());
-			ecrireScore(this.niveau.getMeilleurScore());
-			ecrireTemp(this.niveau.getMeilleurTempsEnSeconde());
+			super.ecrireScore(this.niveau.getMeilleurScore());
+			super.ecrireTemp(this.niveau.getMeilleurTempsEnSeconde());
 			System.out.println("Fin ecriture");
 		} catch (Exception e) {
 
 		}
-	}
-
-	/**
-	 * vide le fichier portant le nom "nomFichier"
-	 */
-	private void viderFichier() {
-		try (FileWriter lefichier = new FileWriter(nomFichier);) {
-			lefichier.write("");
-		} catch (IOException e) {
-			System.out.println("Erreur : Vidage impossible");
-		}
-	}
-
-	/**
-	 * Remplie le ficher avec l'id passer en parametre. Et ecrit une entête //ID
-	 * 
-	 * @param id qui sera ecrit dans le fichier
-	 * @throws IOException
-	 */
-	private void ecrireId(String id) throws IOException {
-		System.out.println("Ecriture id");
-		FileWriter lefichier = new FileWriter(super.nomFichier, true);
-		lefichier.write("//ID\n");
-		lefichier.write(id + "\n");
-		lefichier.close();
-	}
-
-	/**
-	 * Remplie le ficher avec l'nom passer en parametre. Et ecrit une entête //NOM
-	 * 
-	 * @param nom
-	 * @throws IOException
-	 */
-	private void ecrireNom(String nom) throws IOException {
-		System.out.println("Ecriture nom");
-		FileWriter lefichier = new FileWriter(super.nomFichier, true);
-		lefichier.write("//NOM\n");
-		lefichier.write(nom + "\n");
-		lefichier.close();
 	}
 
 	/**
@@ -238,34 +195,8 @@ public class GestionNiveau extends GestionFichier {
 		lefichier.close();
 	}
 
-	/**
-	 * Remplie le ficher avec le score passer en parametre. Et ecrit une entête
-	 * //SCORE
-	 * 
-	 * @param score
-	 * @throws IOException
-	 */
-	private void ecrireScore(int score) throws IOException {
-		System.out.println("Ecriture score");
-		FileWriter lefichier = new FileWriter(super.nomFichier, true);
-		lefichier.write("//SCORE\n");
-		lefichier.write(String.valueOf(score) + "\n");
-		lefichier.close();
-	}
-
-	/**
-	 * Remplie le ficher avec le temps passer en parametre. Et ecrit une entête
-	 * //TEMPS
-	 * 
-	 * @param temps
-	 * @throws IOException
-	 */
-	private void ecrireTemp(int temps) throws IOException {
-		System.out.println("Ecriture temps");
-		FileWriter lefichier = new FileWriter(super.nomFichier, true);
-		lefichier.write("//TEMPS\n");
-		lefichier.write(String.valueOf(temps) + "\n");
-		lefichier.close();
-
+	@Override
+	public String toString() {
+		return this.niveau.toString();
 	}
 }

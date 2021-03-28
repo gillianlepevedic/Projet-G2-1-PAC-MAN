@@ -16,10 +16,14 @@ public class Joueur {
 	}
 	
 	public void ajouterRecord(MeilleurScoreNiveau record) throws Exception {
+		if (record != null) {
 		if (listeRecord.size() < maxElement) {
 			listeRecord.add(record);
 		}else {
 			throw new Exception("Erreur : Liste plein");
+		}
+		}else {
+			System.out.println("Record null");
 		}
 	}
 
@@ -41,7 +45,7 @@ public class Joueur {
 
 	@Override
 	public String toString() {
-		return "Joueur [id=" + id + ", nom=" + nom + ", listeRecord=" + listeRecord + "]";
+		return "Joueur\nid=" + id + "\nnom=" + nom + "\nlisteRecord=" + listeRecord;
 	}
 
 }

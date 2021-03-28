@@ -1,7 +1,5 @@
 package niveau;
 
-import java.util.Arrays;
-
 public class Niveau {
 	final private static int longueurMap = 25;
 	final private static int largeurMap = 25;
@@ -55,7 +53,17 @@ public class Niveau {
 
 	@Override
 	public String toString() {
-		return "Niveau [id=" + id + ", nom=" + nom + ", map=" + Arrays.toString(map) + ", meilleurTempsEnSeconde="
-				+ meilleurTempsEnSeconde + ", meilleurScore=" + meilleurScore + "]";
+		return "Niveau\nid=" + id + "\nnom=" + nom + "\nmap=\n" + toStringMap() + "\nmeilleurTempsEnSeconde=" + meilleurTempsEnSeconde + "\nmeilleurScore=" + meilleurScore ;
+	}
+	
+	private String toStringMap() {
+		String string = "";
+		for (int j = 0; j < 25; j++) {
+			for (int i = 0; i < 25; i++) {
+				string = string + (this.map[j][i] ? 1 : 0);
+			}
+			string = string + "\n";
+		}
+		return string;
 	}
 }

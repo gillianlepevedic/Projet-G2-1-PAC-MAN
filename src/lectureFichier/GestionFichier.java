@@ -56,7 +56,11 @@ public abstract class GestionFichier {
 	protected void lireFichier() {
 
 	}
-
+/**
+ * Cette méthode est appelée si on rencontre les mots "//ID".
+ * @return le l'id 
+ * @throws Exception
+ */
 	protected String lectureID() throws Exception {
 		String autorisation = "^[0-9]{10}$";
 		String id;
@@ -71,7 +75,11 @@ public abstract class GestionFichier {
 
 		return id;
 	}
-
+/**
+ * 
+ * @return
+ * @throws Exception
+ */
 	protected String lectureNom() throws Exception {
 		String autorisation = "^[0-9a-zA-Z]{1,20}$";
 		String nom;
@@ -86,7 +94,7 @@ public abstract class GestionFichier {
 	/**
 	 * Cette méthode est appelée si on rencontre les mots "//SCORE".
 	 * 
-	 * @return retourne le score lu par le fichier sinon retourne 0
+	 * @return retourne le score
 	 * @throws Exception
 	 * @throws NumberFormatException
 	 */
@@ -99,7 +107,7 @@ public abstract class GestionFichier {
 	/**
 	 * Cette méthode est appelée si on rencontre les mots "//TEMPS".
 	 * 
-	 * @return retourne le temps lu par le fichier sinon retourne 0
+	 * @return retourne le temps lu par le fichier
 	 * @throws Exception
 	 * @throws NumberFormatException
 	 */
@@ -143,5 +151,64 @@ public abstract class GestionFichier {
 			System.out.println("Erreur : Vidage impossible");
 			System.out.println(e);
 		}
+	}
+	
+	/**
+	 * Remplie le ficher avec l'id passer en parametre. Et ecrit une entête //ID
+	 * 
+	 * @param id qui sera ecrit dans le fichier
+	 * @throws IOException
+	 */
+	protected void ecrireId(String id) throws IOException {
+		System.out.println("Ecriture id");
+		FileWriter lefichier = new FileWriter(this.nomFichier, true);
+		lefichier.write("//ID\n");
+		lefichier.write(id + "\n");
+		lefichier.close();
+	}
+	
+	/**
+	 * Remplie le ficher avec l'nom passer en parametre. Et ecrit une entête //NOM
+	 * 
+	 * @param nom
+	 * @throws IOException
+	 */
+	protected void ecrireNom(String nom) throws IOException {
+		System.out.println("Ecriture nom");
+		FileWriter lefichier = new FileWriter(this.nomFichier, true);
+		lefichier.write("//NOM\n");
+		lefichier.write(nom + "\n");
+		lefichier.close();
+	}
+	
+	/**
+	 * Remplie le ficher avec le score passer en parametre. Et ecrit une entête
+	 * //SCORE
+	 * 
+	 * @param score
+	 * @throws IOException
+	 */
+	protected void ecrireScore(int score) throws IOException {
+		System.out.println("Ecriture score");
+		FileWriter lefichier = new FileWriter(this.nomFichier, true);
+		lefichier.write("//SCORE\n");
+		lefichier.write(String.valueOf(score) + "\n");
+		lefichier.close();
+	}
+	
+	/**
+	 * Remplie le ficher avec le temps passer en parametre. Et ecrit une entête
+	 * //TEMPS
+	 * 
+	 * @param temps
+	 * @throws IOException
+	 */
+	protected void ecrireTemp(int temps) throws IOException {
+		System.out.println("Ecriture temps");
+		FileWriter lefichier = new FileWriter(this.nomFichier, true);
+		lefichier.write("//TEMPS\n");
+		lefichier.write(String.valueOf(temps) + "\n");
+		lefichier.close();
+
 	}
 }
