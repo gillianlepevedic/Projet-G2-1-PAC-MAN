@@ -6,9 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-import joueur.MeilleurScoreNiveau;
-import niveau.Niveau;
-
 /**
  * Class technique cette classe permet de simplifier la lecture de fichier de
  * Niveau ou de Joueur. Classe abstraite
@@ -59,11 +56,13 @@ public class GestionFichier {
 	public void lireFichier() {
 
 	}
-/**
- * Cette méthode est appelée si on rencontre les mots "//ID".
- * @return le l'id 
- * @throws Exception
- */
+
+	/**
+	 * Cette méthode est appelée si on rencontre les mots "//ID".
+	 * 
+	 * @return le l'id
+	 * @throws Exception
+	 */
 	public String lectureID() throws Exception {
 		String autorisation = "^[0-9]{10}$";
 		String id;
@@ -78,11 +77,12 @@ public class GestionFichier {
 
 		return id;
 	}
-/**
- * 
- * @return
- * @throws Exception
- */
+
+	/**
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	public String lectureNom() throws Exception {
 		String autorisation = "^[0-9a-zA-Z]{1,20}$";
 		String nom;
@@ -93,7 +93,7 @@ public class GestionFichier {
 
 		return nom;
 	}
-	
+
 	/**
 	 * Cette méthode est appelée si on rencontre les mots "//MAP". Elle lit le parti
 	 * du fichier contenant la map et vérifie plusieurs critères. La longueur, la
@@ -132,9 +132,7 @@ public class GestionFichier {
 
 		return map;
 	}
-	
-	
-	
+
 	/**
 	 * 
 	 * @return
@@ -142,7 +140,7 @@ public class GestionFichier {
 	 */
 	public MeilleurScoreNiveau lectureRecord() throws Exception {
 		MeilleurScoreNiveau record = null;
-		int i=3;
+		int i = 3;
 		try {
 			record = new MeilleurScoreNiveau(this.lectureID());
 			i--;
@@ -151,16 +149,16 @@ public class GestionFichier {
 			record.setMeilleurScrore(this.lectureScore());
 			i--;
 			record.setMeilleurTemps(this.lectureTemps());
-		}catch(Exception e) {
+		} catch (Exception e) {
 			System.out.println(e);
 			System.out.println("Erreur : Lecture record illisible");
-			while (i>0) {
+			while (i > 0) {
 				this.lectureLigne();
 				i--;
 			}
 			record = null;
 		}
-		
+
 		return record;
 	}
 
@@ -225,7 +223,7 @@ public class GestionFichier {
 			System.out.println(e);
 		}
 	}
-	
+
 	/**
 	 * Remplie le ficher avec l'id passer en parametre. Et ecrit une entête //ID
 	 * 
@@ -239,7 +237,7 @@ public class GestionFichier {
 		lefichier.write(id + "\n");
 		lefichier.close();
 	}
-	
+
 	/**
 	 * Remplie le ficher avec l'nom passer en parametre. Et ecrit une entête //NOM
 	 * 
@@ -253,7 +251,7 @@ public class GestionFichier {
 		lefichier.write(nom + "\n");
 		lefichier.close();
 	}
-	
+
 	public void ecrireMap(boolean[][] map) throws IOException {
 		System.out.println("Ecriture map");
 		FileWriter lefichier = new FileWriter(this.nomFichier, true);
@@ -270,18 +268,18 @@ public class GestionFichier {
 		}
 		lefichier.close();
 	}
-	
+
 	public void ecrireRecord(MeilleurScoreNiveau record) throws Exception {
 		System.out.println("Ecriture record");
 		FileWriter lefichier = new FileWriter(this.nomFichier, true);
 		lefichier.write("//RECORD\n");
-		lefichier.write(record.getId()+"\n");
-		lefichier.write(record.getNomNiveau()+"\n");
-		lefichier.write(record.getMeilleurScrore()+"\n");
-		lefichier.write(record.getMeilleurTemps()+"\n");
+		lefichier.write(record.getId() + "\n");
+		lefichier.write(record.getNomNiveau() + "\n");
+		lefichier.write(record.getMeilleurScrore() + "\n");
+		lefichier.write(record.getMeilleurTemps() + "\n");
 		lefichier.close();
 	}
-	
+
 	/**
 	 * Remplie le ficher avec le score passer en parametre. Et ecrit une entête
 	 * //SCORE
@@ -296,7 +294,7 @@ public class GestionFichier {
 		lefichier.write(String.valueOf(score) + "\n");
 		lefichier.close();
 	}
-	
+
 	/**
 	 * Remplie le ficher avec le temps passer en parametre. Et ecrit une entête
 	 * //TEMPS

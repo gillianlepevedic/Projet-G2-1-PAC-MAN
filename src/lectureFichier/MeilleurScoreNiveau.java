@@ -1,4 +1,4 @@
-package joueur;
+package lectureFichier;
 
 public class MeilleurScoreNiveau {
 	final private String id;

@@ -1,5 +1,5 @@
-import joueur.Joueur;
-import niveau.Niveau;
+import lectureFichier.Joueur;
+import lectureFichier.Niveau;
 
 public class Main {
 	private static Niveau niveau1;

@@ -1,9 +1,7 @@
-package joueur;
+package lectureFichier;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import lectureFichier.GestionFichier;
 
 public class Joueur {
 	final static int maxElement = 25;
@@ -32,8 +30,8 @@ public class Joueur {
 	}
 
 	public void lectureJoueur() throws Exception {
-
 		gestion.ouvrirFichier();
+
 		for (int i = 0; i < 2; i++) {
 			switch (gestion.lectureLigne()) {
 
@@ -47,40 +45,34 @@ public class Joueur {
 				i--;
 				break;
 			default:
-				throw new Exception("Erreur : entete non reconu");
+				throw new Exception("Erreur : entete partie obligatoire non reconu");
 			}
 
 		}
+
 		System.out.println("Fin lecture partie obligatoire");
 
-		if (this.id != null && this.nom != null) {
-			
-			try {
+		try {
+			while (true) {
+				switch (gestion.lectureLigne()) {
 
-				for (int i = 0; i < Joueur.getMaxelement(); i++) {
-					switch (gestion.lectureLigne()) {
-					
-					case "//RECORD":
-						this.ajouterRecord(gestion.lectureRecord());
-						break;
-					case "":
-						i--;
-						break;
-					default:
-						throw new Exception("Erreur : entete non reconu");
-					}
-
+				case "//RECORD":
+					this.ajouterRecord(gestion.lectureRecord());
+					break;
+				default:
+					throw new Exception("Erreur : entete non reconu");
 				}
-
-			} catch (Exception e) {
-				System.out.print(e);
-				System.out.println(" dans la partie optionel");
-			} finally {
-				System.out.println("Fin lecture");
-				gestion.fermerFichier();
-				System.out.println("Fichier fermer");
 			}
+
+		} catch (Exception e) {
+			System.out.println(e);
 		}
+
+		System.out.println("Il y a " + listeRecord.size() + " records enregisté");
+		System.out.println("Fin lecture  partie obligatoire");
+		gestion.fermerFichier();
+		System.out.println("Fichier fermer");
+
 	}
 
 	public void sauvegarderJoueur() {

@@ -1,6 +1,4 @@
-package niveau;
-
-import lectureFichier.GestionFichier;
+package lectureFichier;
 
 public class Niveau {
 	final private static int longueurMap = 25;
@@ -21,6 +19,10 @@ public class Niveau {
 		meilleurScore = 0;
 	}
 
+	/**
+	 * 
+	 * @throws Exception
+	 */
 	public void lectureNiveau() throws Exception {
 		gestion.ouvrirFichier();
 		for (int i = 0; i < 3; i++) {
@@ -39,43 +41,39 @@ public class Niveau {
 				i--;
 				break;
 			default:
-				throw new Exception("Erreur : entete non reconu");
+				throw new Exception("Erreur : entete partie obligatoire non reconu");
 			}
 		}
 
 		System.out.println("Fin lecture partie obligatoire");
 
-		if (this.id != null && this.nom != null && this.map != null) {
+		try {
+			for (int i = 0; i < 2; i++) {
+				switch (gestion.lectureLigne()) {
 
-			try {
-				for (int i = 0; i < 2; i++) {
-					switch (gestion.lectureLigne()) {
-
-					case "//SCORE":
-						this.meilleurScore = gestion.lectureScore();
-						break;
-					case "//TEMPS":
-						this.meilleurTempsEnSeconde = gestion.lectureTemps();
-						break;
-					case "":
-						i--;
-						break;
-					default:
-						throw new Exception("Erreur : entete non reconu");
-					}
-
+				case "//SCORE":
+					this.meilleurScore = gestion.lectureScore();
+					break;
+				case "//TEMPS":
+					this.meilleurTempsEnSeconde = gestion.lectureTemps();
+					break;
+				case "":
+					i--;
+					break;
+				default:
+					throw new Exception("Erreur : entete non reconu");
 				}
-				System.out.println("Fin lecture partie optionnel");
 
-			} catch (Exception e) {
-				System.out.println("Erreur : Partie optionnel illisible");
-				System.out.println(e);
-			} finally {
-				System.out.println("Fin lecture");
-				gestion.fermerFichier();
-				System.out.println("Fichier fermer");
 			}
+			System.out.println("Fin lecture partie optionnel");
 
+		} catch (Exception e) {
+			System.out.println("Erreur : Partie optionnel illisible");
+			System.out.println(e);
+		} finally {
+			System.out.println("Fin lecture");
+			gestion.fermerFichier();
+			System.out.println("Fichier fermer");
 		}
 	}
 
@@ -97,7 +95,8 @@ public class Niveau {
 			gestion.ecrireTemp(this.meilleurTempsEnSeconde);
 			System.out.println("Fin ecriture");
 		} catch (Exception e) {
-
+			System.out.println("Probleme ecriture fichier");
+			System.out.println(e);
 		}
 	}
 
