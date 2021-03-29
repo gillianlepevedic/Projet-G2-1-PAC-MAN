@@ -35,7 +35,7 @@ public class Niveau {
 				this.nom = gestion.lectureNom();
 				break;
 			case "//MAP":
-				this.map = gestion.lectureMap();
+				this.setMap(gestion.lectureMap());
 				break;
 			case "":
 				i--;
@@ -100,14 +100,6 @@ public class Niveau {
 		}
 	}
 
-	public int getMeilleurTempsEnSeconde() {
-		return meilleurTempsEnSeconde;
-	}
-
-	public int getMeilleurScore() {
-		return meilleurScore;
-	}
-
 	public static int getLongueurMap() {
 		return longueurMap;
 	}
@@ -126,6 +118,41 @@ public class Niveau {
 
 	public boolean[][] getMap() {
 		return map;
+	}
+	
+	public void setMap(boolean[][] map) throws Exception {
+		if (map[0].length == Niveau.longueurMap && map.length == Niveau.largeurMap) {
+			this.map = map;
+		}else {
+			throw new Exception("Erreur : map pas au norme");
+		}
+		
+	}
+
+
+	public int getMeilleurScore() {
+		return meilleurScore;
+	}
+
+	public void setMeilleurScore(int meilleurScore) throws Exception {
+		if (meilleurScore > this.meilleurScore) {
+			this.meilleurScore = meilleurScore;
+		} else {
+			throw new Exception("Erreur : meilleurTempsEnSeconde plus grand");
+		}
+	}
+
+	public int getMeilleurTempsEnSeconde() {
+		return meilleurTempsEnSeconde;
+	}
+
+	public void setMeilleurTempsEnSeconde(int meilleurTempsEnSeconde) throws Exception {
+		if (meilleurTempsEnSeconde > this.meilleurTempsEnSeconde) {
+			this.meilleurTempsEnSeconde = meilleurTempsEnSeconde;
+		} else {
+			throw new Exception("Erreur : meilleurTempsEnSeconde plus grand");
+		}
+
 	}
 
 	@Override
