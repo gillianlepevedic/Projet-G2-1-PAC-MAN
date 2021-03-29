@@ -6,6 +6,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
+import joueur.MeilleurScoreNiveau;
+import niveau.Niveau;
+
 /**
  * Class technique cette classe permet de simplifier la lecture de fichier de
  * Niveau ou de Joueur. Classe abstraite
@@ -13,7 +16,7 @@ import java.util.Scanner;
  * @author gillian
  *
  */
-public abstract class GestionFichier {
+public class GestionFichier {
 	protected String nomFichier;
 	private Scanner scannerDeFichier;
 
@@ -22,7 +25,7 @@ public abstract class GestionFichier {
 	 * 
 	 * @param nomFichier
 	 */
-	protected GestionFichier(String nomFichier) {
+	public GestionFichier(String nomFichier) {
 		this.nomFichier = nomFichier;
 	}
 
@@ -31,7 +34,7 @@ public abstract class GestionFichier {
 	 * 
 	 * @throws FileNotFoundException Si le fichier est introuvable
 	 */
-	protected void ouvrirFichier() throws FileNotFoundException {
+	public void ouvrirFichier() throws FileNotFoundException {
 		FileInputStream file = new FileInputStream(nomFichier);
 		scannerDeFichier = new Scanner(file);
 		System.out.println("Fichier ouvert");
@@ -41,7 +44,7 @@ public abstract class GestionFichier {
 	/**
 	 * fermer le fichier portant le nom "nomFichier"
 	 */
-	protected void fermerFichier() {
+	public void fermerFichier() {
 		try {
 			scannerDeFichier.close();
 		} catch (NullPointerException e) {
@@ -53,7 +56,7 @@ public abstract class GestionFichier {
 	/**
 	 * Coming soon
 	 */
-	protected void lireFichier() {
+	public void lireFichier() {
 
 	}
 /**
@@ -61,7 +64,7 @@ public abstract class GestionFichier {
  * @return le l'id 
  * @throws Exception
  */
-	protected String lectureID() throws Exception {
+	public String lectureID() throws Exception {
 		String autorisation = "^[0-9]{10}$";
 		String id;
 		id = lectureLigne();
@@ -80,7 +83,7 @@ public abstract class GestionFichier {
  * @return
  * @throws Exception
  */
-	protected String lectureNom() throws Exception {
+	public String lectureNom() throws Exception {
 		String autorisation = "^[0-9a-zA-Z]{1,20}$";
 		String nom;
 		nom = lectureLigne();
@@ -90,6 +93,76 @@ public abstract class GestionFichier {
 
 		return nom;
 	}
+	
+	/**
+	 * Cette méthode est appelée si on rencontre les mots "//MAP". Elle lit le parti
+	 * du fichier contenant la map et vérifie plusieurs critères. La longueur, la
+	 * largeur, les valeursSi la map répond pas à un seul de ces critères la lecture
+	 * est abandonnée
+	 * 
+	 * @return retourne un tableau de boolean a deux dimension.
+	 * @throws Exception Si la map de corespond pas au critère.
+	 */
+	public boolean[][] lectureMap() throws Exception {
+		boolean[][] map = new boolean[Niveau.getLargeurMap()][Niveau.getLongueurMap()];
+		String ligneString;
+
+		for (int largeur = 0; largeur < Niveau.getLargeurMap(); largeur++) {
+			ligneString = this.lectureLigne();
+
+			if (ligneString == null) {
+				throw new Exception("Erreur : Ligne vide");
+			}
+
+			if (ligneString.length() != Niveau.getLongueurMap()) {
+				throw new Exception("Erreur : La ligne " + ligneString + " n'est pas a la bonne taille");
+			}
+
+			for (int longueur = 0; longueur < Niveau.getLongueurMap(); longueur++) {
+				if (ligneString.charAt(longueur) == '0' || ligneString.charAt(longueur) == '1') {
+					map[largeur][longueur] = ligneString.charAt(longueur) == '1';
+				} else {
+					throw new Exception(
+							"Erreur : le caractere " + ligneString.charAt(longueur) + " est interdit dans une map");
+				}
+
+			}
+
+		}
+
+		return map;
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public MeilleurScoreNiveau lectureRecord() throws Exception {
+		MeilleurScoreNiveau record = null;
+		int i=3;
+		try {
+			record = new MeilleurScoreNiveau(this.lectureID());
+			i--;
+			record.setNomNiveau(this.lectureNom());
+			i--;
+			record.setMeilleurScrore(this.lectureScore());
+			i--;
+			record.setMeilleurTemps(this.lectureTemps());
+		}catch(Exception e) {
+			System.out.println(e);
+			System.out.println("Erreur : Lecture record illisible");
+			while (i>0) {
+				this.lectureLigne();
+				i--;
+			}
+			record = null;
+		}
+		
+		return record;
+	}
 
 	/**
 	 * Cette méthode est appelée si on rencontre les mots "//SCORE".
@@ -98,7 +171,7 @@ public abstract class GestionFichier {
 	 * @throws Exception
 	 * @throws NumberFormatException
 	 */
-	protected int lectureScore() throws NumberFormatException, Exception {
+	public int lectureScore() throws NumberFormatException, Exception {
 		int score;
 		score = Integer.parseInt(lectureLigne());
 		return score;
@@ -111,7 +184,7 @@ public abstract class GestionFichier {
 	 * @throws Exception
 	 * @throws NumberFormatException
 	 */
-	protected int lectureTemps() throws NumberFormatException, Exception {
+	public int lectureTemps() throws NumberFormatException, Exception {
 		int temps;
 		temps = Integer.parseInt(lectureLigne());
 		return temps;
@@ -123,7 +196,7 @@ public abstract class GestionFichier {
 	 * @return la ligne lue
 	 * @throws Exception si il y a plus de ligne a lire dans le fichier
 	 */
-	protected String lectureLigne() throws Exception {
+	public String lectureLigne() throws Exception {
 		String ligne = null;
 		if (scannerDeFichier.hasNext()) {
 			ligne = scannerDeFichier.nextLine();
@@ -137,14 +210,14 @@ public abstract class GestionFichier {
 	/**
 	 * Coming soon
 	 */
-	protected void ecrireFichier() {
+	public void ecrireFichier() {
 
 	}
 
 	/**
 	 * Vide le fichier partant le nom "nomFichier"
 	 */
-	protected void vidageFichier() {
+	public void vidageFichier() {
 		try (FileWriter lefichier = new FileWriter(nomFichier);) {
 			lefichier.write("");
 		} catch (IOException e) {
@@ -159,7 +232,7 @@ public abstract class GestionFichier {
 	 * @param id qui sera ecrit dans le fichier
 	 * @throws IOException
 	 */
-	protected void ecrireId(String id) throws IOException {
+	public void ecrireId(String id) throws IOException {
 		System.out.println("Ecriture id");
 		FileWriter lefichier = new FileWriter(this.nomFichier, true);
 		lefichier.write("//ID\n");
@@ -173,11 +246,39 @@ public abstract class GestionFichier {
 	 * @param nom
 	 * @throws IOException
 	 */
-	protected void ecrireNom(String nom) throws IOException {
+	public void ecrireNom(String nom) throws IOException {
 		System.out.println("Ecriture nom");
 		FileWriter lefichier = new FileWriter(this.nomFichier, true);
 		lefichier.write("//NOM\n");
 		lefichier.write(nom + "\n");
+		lefichier.close();
+	}
+	
+	public void ecrireMap(boolean[][] map) throws IOException {
+		System.out.println("Ecriture map");
+		FileWriter lefichier = new FileWriter(this.nomFichier, true);
+		lefichier.write("//MAP\n");
+		for (int largeur = 0; largeur < Niveau.getLargeurMap(); largeur++) {
+			for (int longueur = 0; longueur < Niveau.getLongueurMap(); longueur++) {
+				if (map[largeur][longueur]) {
+					lefichier.write("1");
+				} else {
+					lefichier.write("0");
+				}
+			}
+			lefichier.write("\n");
+		}
+		lefichier.close();
+	}
+	
+	public void ecrireRecord(MeilleurScoreNiveau record) throws Exception {
+		System.out.println("Ecriture record");
+		FileWriter lefichier = new FileWriter(this.nomFichier, true);
+		lefichier.write("//RECORD\n");
+		lefichier.write(record.getId()+"\n");
+		lefichier.write(record.getNomNiveau()+"\n");
+		lefichier.write(record.getMeilleurScrore()+"\n");
+		lefichier.write(record.getMeilleurTemps()+"\n");
 		lefichier.close();
 	}
 	
@@ -188,7 +289,7 @@ public abstract class GestionFichier {
 	 * @param score
 	 * @throws IOException
 	 */
-	protected void ecrireScore(int score) throws IOException {
+	public void ecrireScore(int score) throws IOException {
 		System.out.println("Ecriture score");
 		FileWriter lefichier = new FileWriter(this.nomFichier, true);
 		lefichier.write("//SCORE\n");
@@ -203,7 +304,7 @@ public abstract class GestionFichier {
 	 * @param temps
 	 * @throws IOException
 	 */
-	protected void ecrireTemp(int temps) throws IOException {
+	public void ecrireTemp(int temps) throws IOException {
 		System.out.println("Ecriture temps");
 		FileWriter lefichier = new FileWriter(this.nomFichier, true);
 		lefichier.write("//TEMPS\n");

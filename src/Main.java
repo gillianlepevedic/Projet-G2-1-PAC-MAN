@@ -1,20 +1,31 @@
-import lectureFichier.GestionJoueur;
-import lectureFichier.GestionNiveau;
+import joueur.Joueur;
+import niveau.Niveau;
 
 public class Main {
-	private static GestionNiveau gestionNiveau1;
-	private static GestionJoueur gestionJoueur1;
+	private static Niveau niveau1;
+	private static Joueur joueur1;
 
 	public static void main(String[] args) {
-		gestionNiveau1 = new GestionNiveau("./fic/niveau1.txt");
-		gestionNiveau1.LectureNiveau();
-		System.out.println(gestionNiveau1);
-		gestionNiveau1.sauvegarderNiveau();
+		niveau1 = new Niveau("./fic/niveau1.txt");
+		try {
+			niveau1.lectureNiveau();
+			niveau1.sauvegarderNiveau();
+		}catch(Exception e){
+			System.out.println(e);
+			niveau1 = null;
+		}
 		
-		gestionJoueur1 = new GestionJoueur("./fic/joueur1.txt");
-		gestionJoueur1.LectureJoueur();
-		System.out.println(gestionJoueur1);
-		gestionJoueur1.sauvegarderJoueur();
+		joueur1 = new Joueur("./fic/joueur1.txt");
+		try {
+			joueur1.lectureJoueur();
+			joueur1.sauvegarderJoueur();
+		}catch(Exception e){
+			System.out.println(e);
+			niveau1 = null;
+		}
+		
+		System.out.println(niveau1);
+		System.out.println(joueur1);
 	}
 
 }
