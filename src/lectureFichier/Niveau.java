@@ -1,8 +1,8 @@
 package lectureFichier;
 
 public class Niveau {
-	final private static int longueurMap = 25;
-	final private static int largeurMap = 25;
+	final static int longueurMap = 25;
+	final  static int largeurMap = 25;
 	GestionFichier gestion;
 	private String id;
 	private String nom;
@@ -99,26 +99,6 @@ public class Niveau {
 			System.out.println(e);
 		}
 	}
-
-	public static int getLongueurMap() {
-		return longueurMap;
-	}
-
-	public static int getLargeurMap() {
-		return largeurMap;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public String getNom() {
-		return nom;
-	}
-
-	public boolean[][] getMap() {
-		return map;
-	}
 	
 	public void setMap(boolean[][] map) throws Exception {
 		if (map[0].length == Niveau.longueurMap && map.length == Niveau.largeurMap) {
@@ -129,21 +109,12 @@ public class Niveau {
 		
 	}
 
-
-	public int getMeilleurScore() {
-		return meilleurScore;
-	}
-
 	public void setMeilleurScore(int meilleurScore) throws Exception {
 		if (meilleurScore > this.meilleurScore) {
 			this.meilleurScore = meilleurScore;
 		} else {
 			throw new Exception("Erreur : meilleurTempsEnSeconde plus grand");
 		}
-	}
-
-	public int getMeilleurTempsEnSeconde() {
-		return meilleurTempsEnSeconde;
 	}
 
 	public void setMeilleurTempsEnSeconde(int meilleurTempsEnSeconde) throws Exception {
@@ -153,6 +124,10 @@ public class Niveau {
 			throw new Exception("Erreur : meilleurTempsEnSeconde plus grand");
 		}
 
+	}
+
+	public String getId() {
+		return id;
 	}
 
 	@Override

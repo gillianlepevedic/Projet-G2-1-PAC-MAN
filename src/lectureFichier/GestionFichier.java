@@ -104,21 +104,21 @@ public class GestionFichier {
 	 * @throws Exception Si la map de corespond pas au critère.
 	 */
 	public boolean[][] lectureMap() throws Exception {
-		boolean[][] map = new boolean[Niveau.getLargeurMap()][Niveau.getLongueurMap()];
+		boolean[][] map = new boolean[Niveau.largeurMap][Niveau.longueurMap];
 		String ligneString;
 
-		for (int largeur = 0; largeur < Niveau.getLargeurMap(); largeur++) {
+		for (int largeur = 0; largeur < Niveau.largeurMap; largeur++) {
 			ligneString = this.lectureLigne();
 
 			if (ligneString == null) {
 				throw new Exception("Erreur : Ligne vide");
 			}
 
-			if (ligneString.length() != Niveau.getLongueurMap()) {
+			if (ligneString.length() != Niveau.longueurMap) {
 				throw new Exception("Erreur : La ligne " + ligneString + " n'est pas a la bonne taille");
 			}
 
-			for (int longueur = 0; longueur < Niveau.getLongueurMap(); longueur++) {
+			for (int longueur = 0; longueur < Niveau.longueurMap; longueur++) {
 				if (ligneString.charAt(longueur) == '0' || ligneString.charAt(longueur) == '1') {
 					map[largeur][longueur] = ligneString.charAt(longueur) == '1';
 				} else {
@@ -256,8 +256,8 @@ public class GestionFichier {
 		System.out.println("Ecriture map");
 		FileWriter lefichier = new FileWriter(this.nomFichier, true);
 		lefichier.write("//MAP\n");
-		for (int largeur = 0; largeur < Niveau.getLargeurMap(); largeur++) {
-			for (int longueur = 0; longueur < Niveau.getLongueurMap(); longueur++) {
+		for (int largeur = 0; largeur < Niveau.largeurMap; largeur++) {
+			for (int longueur = 0; longueur < Niveau.longueurMap; longueur++) {
 				if (map[largeur][longueur]) {
 					lefichier.write("1");
 				} else {

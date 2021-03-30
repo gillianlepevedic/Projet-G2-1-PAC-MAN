@@ -91,22 +91,6 @@ public class Joueur {
 		}
 	}
 
-	public static int getMaxelement() {
-		return maxElement;
-	}
-
-	public List<MeilleurScoreNiveau> getListeRecord() {
-		return listeRecord;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public String getNom() {
-		return nom;
-	}
-
 	@Override
 	public String toString() {
 		return "Joueur\nid=" + id + "\nnom=" + nom + "\nlisteRecord=" + listeRecord;
