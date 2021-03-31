@@ -19,6 +19,16 @@ public class Niveau {
 		meilleurScore = 0;
 	}
 
+	public Niveau(String id, String nom, boolean[][] map) {
+		this.id = id;
+		this.nom = nom;
+		this.map = map;
+		meilleurTempsEnSeconde = 0;
+		meilleurScore = 0;
+	}
+
+
+
 	/**
 	 * 
 	 * @throws Exception
@@ -85,19 +95,8 @@ public class Niveau {
 	 * @param niveau il serat envoyé dans le fichier "nomfichier"
 	 */
 	public void sauvegarderNiveau() {
-		System.out.println("Debut ecriture");
-		gestion.vidageFichier();
-		try {
-			gestion.ecrireId(this.id);
-			gestion.ecrireNom(this.nom);
-			gestion.ecrireMap(this.map);
-			gestion.ecrireScore(this.meilleurScore);
-			gestion.ecrireTemp(this.meilleurTempsEnSeconde);
-			System.out.println("Fin ecriture");
-		} catch (Exception e) {
-			System.out.println("Probleme ecriture fichier");
-			System.out.println(e);
-		}
+		
+		 
 	}
 	
 	public void setMap(boolean[][] map) throws Exception {
@@ -134,6 +133,22 @@ public class Niveau {
 	public String toString() {
 		return "Niveau\nid=" + id + "\nnom=" + nom + "\nmap=\n" + toStringMap() + "\nmeilleurScore=" + meilleurScore
 				+ "\nmeilleurTempsEnSeconde=" + meilleurTempsEnSeconde;
+	}
+
+	public String getNom() {
+		return nom;
+	}
+
+	public boolean[][] getMap() {
+		return map;
+	}
+
+	public int getMeilleurScore() {
+		return meilleurScore;
+	}
+
+	public int getMeilleurTempsEnSeconde() {
+		return meilleurTempsEnSeconde;
 	}
 
 	private String toStringMap() {
