@@ -20,6 +20,7 @@ public class Niveau {
 		meilleurScore = 0;
 	}
 
+
 	public void setMeilleurScore(int meilleurScore) throws Exception {
 		if (meilleurScore >= this.meilleurScore) {
 			this.meilleurScore = meilleurScore;
