@@ -15,8 +15,22 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * Classe technique Lit et ecrit des fichiers .pac en XML Les fichiers doivent
+ * correspond aux caractéristiques des fichiers niveau ou joueur.
+ * 
+ * @author gillian
+ *
+ */
 public class GestionFichierXML {
-
+	/**
+	 * Lit des fichiers niveau. Si le fichier répond aux contraintes obligatoires
+	 * (ID NOM MAP). Le SCORE et TEMPS sont optionnels
+	 * 
+	 * @param nomFichier et le chemin pour y acceder
+	 * @return Niveau
+	 * @throws Exception si la partie obligatoire est ilisible
+	 */
 	public static Niveau lireNiveau(String nomFichier) throws Exception {
 		Niveau niveau = null;
 		String id = null;
@@ -49,6 +63,15 @@ public class GestionFichierXML {
 
 		return niveau;
 	}
+
+	/**
+	 * Lit des fichiers joueur. Si le fichier répond aux contraintes obligatoires
+	 * (ID NOM). Les RECORD sont optionnels
+	 * 
+	 * @param nomFichier et le chemin pour y acceder
+	 * @return Joueur
+	 * @throws Exception si la partie obligatoire est ilisible
+	 */
 
 	public static Joueur lireJoueur(String nomFichier) throws Exception {
 		Joueur joueur = null;
@@ -86,6 +109,80 @@ public class GestionFichierXML {
 		return joueur;
 	}
 
+	/**
+	 * Ecrit un niveau sous forme XML.
+	 * 
+	 * @param niveau
+	 */
+	public static void ecrireNiveau(Niveau niveau) {
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder;
+
+		try {
+			dBuilder = dbFactory.newDocumentBuilder();
+			Document document = dBuilder.newDocument();
+			Element rootElement = document.createElementNS("https://iut-lannion.univ-rennes1.fr/", "Niveau");
+
+			rootElement.appendChild(formaterValeur(document, rootElement, "ID", niveau.getId()));
+			rootElement.appendChild(formaterValeur(document, rootElement, "NOM", niveau.getNom()));
+			rootElement.appendChild(formaterMap(document, niveau.getMap()));
+			rootElement.appendChild(
+					formaterValeur(document, rootElement, "MeilleurScore", String.valueOf(niveau.getMeilleurScore())));
+			rootElement.appendChild(formaterValeur(document, rootElement, "MeilleurTemps",
+					String.valueOf(niveau.getMeilleurTempsEnSeconde())));
+			document.appendChild(rootElement);
+
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.transform(new DOMSource(document), new StreamResult(new File(niveau.getNomFichier())));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * Ecrit un Joueur sous forme XMl
+	 * 
+	 * @param joueur
+	 */
+	public static void ecrireJoueur(Joueur joueur) {
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder;
+
+		try {
+			dBuilder = dbFactory.newDocumentBuilder();
+			Document document = dBuilder.newDocument();
+			Element rootElement = document.createElementNS("https://iut-lannion.univ-rennes1.fr/", "Joueur");
+			rootElement.appendChild(formaterValeur(document, rootElement, "ID", joueur.getId()));
+			rootElement.appendChild(formaterValeur(document, rootElement, "NOM", joueur.getNom()));
+
+			for (int numRecord = 0; numRecord < joueur.getListeRecord().size(); numRecord++) {
+				rootElement.appendChild(formaterRecord(document, joueur.getListeRecord().get(numRecord)));
+
+			}
+
+			document.appendChild(rootElement);
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.transform(new DOMSource(document), new StreamResult(new File(joueur.getNomFichier())));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Verifie si l'ID lu repond au critere
+	 * 
+	 * @param idNode
+	 * @return String id si il est valide
+	 * @throws Exception Si l'ID n'est pas de la bonne taille et contient des
+	 *                   caracter interdit
+	 */
 	private static String lectureID(NodeList idNode) throws Exception {
 		String idString = idNode.item(0).getTextContent();
 		String autorisation = "^[0-9]{10}$";
@@ -100,6 +197,13 @@ public class GestionFichierXML {
 		return idString;
 	}
 
+	/**
+	 * Verifie si l'NOM lu repond au critere
+	 * 
+	 * @param nomNode
+	 * @return String nom si il est valide
+	 * @throws Exception si contient des caractere interdit
+	 */
 	private static String lectureNom(NodeList nomNode) throws Exception {
 		String nomString = nomNode.item(0).getTextContent();
 		String autorisation = "^[0-9a-zA-Z]{1,20}$";
@@ -111,6 +215,14 @@ public class GestionFichierXML {
 		return nomString;
 	}
 
+	/**
+	 * Verifie si la MAP lu repond au critere
+	 * 
+	 * @param mapNode
+	 * @return boolean[][] si la map repond au critere
+	 * @throws Exception Si la map n'est pas a la bonne taille, contient des
+	 *                   caracter interdit
+	 */
 	private static boolean[][] lireMap(NodeList mapNode) throws Exception {
 		boolean[][] map = new boolean[Niveau.largeurMap][Niveau.longueurMap];
 		String ligneMapString = null;
@@ -150,85 +262,57 @@ public class GestionFichierXML {
 		return map;
 	}
 
+	/**
+	 * Verifie si le RECORD lu repond au critere
+	 * 
+	 * @param recordNode
+	 * @return MeilleurScoreNiveau sinon renvoie Null
+	 */
 	private static MeilleurScoreNiveau lireRecord(Node recordNode) {
-		String id = null;
-		Element recordElement = (Element) recordNode;
-		id = recordElement.getElementsByTagName("ID_MAP").item(0).getTextContent();
+		MeilleurScoreNiveau record = null;
 
-		MeilleurScoreNiveau record = new MeilleurScoreNiveau(id);
-		record.setNomNiveau(recordElement.getElementsByTagName("NOM_MAP").item(0).getTextContent());
-		record.setMeilleurScrore(
-				Integer.parseInt(recordElement.getElementsByTagName("MeilleurScroreMap").item(0).getTextContent()));
-		record.setMeilleurTemps(
-				Integer.parseInt(recordElement.getElementsByTagName("MeilleurTempsMap").item(0).getTextContent()));
+		try {
+			String id = null;
+			Element recordElement = (Element) recordNode;
+			id = lectureID(recordElement.getElementsByTagName("ID_MAP"));
+
+			record = new MeilleurScoreNiveau(id);
+
+			record.setNomNiveau(lectureNom(recordElement.getElementsByTagName("NOM_MAP")));
+			record.setMeilleurScrore(lectureScore(recordElement.getElementsByTagName("MeilleurScroreMap")));
+			record.setMeilleurTemps(lectureTemps(recordElement.getElementsByTagName("MeilleurTempsMap")));
+
+		} catch (Exception e) {
+			System.out.println(e);
+			System.out.println("record ilisible");
+			record = null;
+		}
 
 		return record;
 	}
 
+	/**
+	 * Verifie si le SCORE lu repond au critere
+	 * 
+	 * @param scoreNode
+	 * @return
+	 * @throws Exception contient des caracter interdit
+	 */
 	private static int lectureScore(NodeList scoreNode) throws Exception {
 		String scoreString = scoreNode.item(0).getTextContent();
 		return Integer.parseInt(scoreString);
 	}
 
+	/**
+	 * Verifie si le TEMPS lu repond au critere
+	 * 
+	 * @param scoreNode
+	 * @return
+	 * @throws Exception contient des caracter interdit
+	 */
 	private static int lectureTemps(NodeList tempsNode) throws Exception {
 		String tempsString = tempsNode.item(0).getTextContent();
 		return Integer.parseInt(tempsString);
-	}
-
-	public static void ecrireNiveau(Niveau niveau) {
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder;
-
-		try {
-			dBuilder = dbFactory.newDocumentBuilder();
-			Document document = dBuilder.newDocument();
-			Element rootElement = document.createElementNS("https://iut-lannion.univ-rennes1.fr/", "Niveau");
-
-			rootElement.appendChild(formaterValeur(document, rootElement, "ID", niveau.getId()));
-			rootElement.appendChild(formaterValeur(document, rootElement, "NOM", niveau.getNom()));
-			rootElement.appendChild(formaterMap(document, niveau.getMap()));
-			rootElement.appendChild(
-					formaterValeur(document, rootElement, "MeilleurScore", String.valueOf(niveau.getMeilleurScore())));
-			rootElement.appendChild(formaterValeur(document, rootElement, "MeilleurTemps",
-					String.valueOf(niveau.getMeilleurTempsEnSeconde())));
-			document.appendChild(rootElement);
-
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.transform(new DOMSource(document), new StreamResult(new File(niveau.getNomFichier())));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	public static void ecrireJoueur(Joueur joueur) {
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder;
-
-		try {
-			dBuilder = dbFactory.newDocumentBuilder();
-			Document document = dBuilder.newDocument();
-			Element rootElement = document.createElementNS("https://iut-lannion.univ-rennes1.fr/", "Joueur");
-			rootElement.appendChild(formaterValeur(document, rootElement, "ID", joueur.getId()));
-			rootElement.appendChild(formaterValeur(document, rootElement, "NOM", joueur.getNom()));
-
-			for (int numRecord = 0; numRecord < joueur.getListeRecord().size(); numRecord++) {
-				rootElement.appendChild(formaterRecord(document, joueur.getListeRecord().get(numRecord)));
-
-			}
-
-			document.appendChild(rootElement);
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.transform(new DOMSource(document), new StreamResult(new File(joueur.getNomFichier())));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	private static Node formaterMap(Document fichier, boolean[][] mapBool) {

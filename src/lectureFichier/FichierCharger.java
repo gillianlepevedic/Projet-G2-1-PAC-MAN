@@ -13,11 +13,26 @@ public class FichierCharger {
 		this.joueurConecter = null;
 	}
 
+	public Niveau ajouterNiveau(String nomfichier) throws Exception {
+		Niveau niveau = GestionFichierXML.lireNiveau(nomfichier);
+		if (niveau != null) {
+			if (this.niveauCharger.size() < maxElement) {
+				this.niveauCharger.add(niveau);
+			} else {
+				throw new Exception("Erreur : Liste plein");
+			}
+		} else {
+			throw new Exception("Erreur : Niveau null");
+		}
+
+		return niveau;
+	}
+
 	public Niveau sauvegardeNiveau(String id) throws Exception {
 		boolean sauvegarder = false;
 		Niveau retourneNiveau = null;
-		
-		for ( Niveau niveau : niveauCharger) {
+
+		for (Niveau niveau : niveauCharger) {
 			if (id.equals(niveau.getId())) {
 				GestionFichierXML.ecrireNiveau(niveau);
 				retourneNiveau = niveau;
@@ -30,24 +45,21 @@ public class FichierCharger {
 		} else {
 			throw new Exception("Erreur : niveau pas trouver");
 		}
-		
+
 		return retourneNiveau;
 	}
-	
+
 	public Niveau dechargerNiveau(String id) throws Exception {
-		Niveau niveausup= sauvegardeNiveau(id);
-		
-		
+		Niveau niveausup = sauvegardeNiveau(id);
+
 		if (this.niveauCharger.contains(niveausup)) {
 			this.niveauCharger.remove(niveausup);
-		}else {
+		} else {
 			throw new Exception("Erreur : niveau pas trouve");
 		}
 		System.out.println("Supression reussi");
 		return niveausup;
 	}
-	
-	
 
 	public Joueur chargerJoueur(String nomfic) throws Exception {
 		Joueur joueur = GestionFichierXML.lireJoueur(nomfic);
@@ -75,21 +87,6 @@ public class FichierCharger {
 		Joueur joueursupp = sauvegarderJoueur();
 		this.joueurConecter = null;
 		return joueursupp;
-	}
-
-	public Niveau ajouterNiveau(String nomfichier) throws Exception {
-		Niveau niveau = GestionFichierXML.lireNiveau(nomfichier);
-		if (niveau != null) {
-			if (this.niveauCharger.size() < maxElement) {
-				this.niveauCharger.add(niveau);
-			} else {
-				throw new Exception("Erreur : Liste plein");
-			}
-		} else {
-			throw new Exception("Erreur : Niveau null");
-		}
-		
-		return niveau;
 	}
 
 	public List<Niveau> getNiveauCharger() {

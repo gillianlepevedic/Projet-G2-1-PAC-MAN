@@ -6,7 +6,7 @@
         <ID_MAP>0000000018</ID_MAP>
         <NOM_MAP>niveau1</NOM_MAP>
         <MeilleurScroreMap>12542</MeilleurScroreMap>
-        <MeilleurTempsMap>125</MeilleurTempsMap>
+        <MeilleurTempsMap>0</MeilleurTempsMap>
     </Record>
     <Record>
         <ID_MAP>0000000019</ID_MAP>

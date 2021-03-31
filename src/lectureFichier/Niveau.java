@@ -62,10 +62,6 @@ public class Niveau {
 		return meilleurTempsEnSeconde;
 	}
 
-	public boolean equals(Niveau niveau) {
-		return (this.id == niveau.getId());
-	}
-
 	@Override
 	public String toString() {
 		return "\nNiveau \n	nomFichier=" + nomFichier + "\n	id=" + id + "\n	nom=" + nom + "\n	meilleurScore="
