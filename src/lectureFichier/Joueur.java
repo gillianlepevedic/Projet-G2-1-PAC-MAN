@@ -5,15 +5,15 @@ import java.util.List;
 
 public class Joueur {
 	final static int maxElement = 25;
-	private GestionFichier gestion;
-	private String id;
-	private String nom;
+	private final String nomFichier;
+	private final String id;
+	private final String nom;
 	private List<MeilleurScoreNiveau> listeRecord;
 
-	public Joueur(String nomfichier) {
-		gestion = new GestionFichier(nomfichier);
-		this.id = null;
-		this.nom = null;
+	public Joueur(String nomFichier, String id, String nom) {
+		this.nomFichier = nomFichier;
+		this.id = id;
+		this.nom = nom;
 		listeRecord = new ArrayList<>(maxElement);
 	}
 
@@ -29,71 +29,26 @@ public class Joueur {
 		}
 	}
 
-	public void lectureJoueur() throws Exception {
-		gestion.ouvrirFichier();
-
-		for (int i = 0; i < 2; i++) {
-			switch (gestion.lectureLigne()) {
-
-			case "//ID":
-				this.id = gestion.lectureID();
-				break;
-			case "//NOM":
-				this.nom = gestion.lectureNom();
-				break;
-			case "":
-				i--;
-				break;
-			default:
-				throw new Exception("Erreur : entete partie obligatoire non reconu");
-			}
-
-		}
-
-		System.out.println("Fin lecture partie obligatoire");
-
-		try {
-			while (true) {
-				switch (gestion.lectureLigne()) {
-
-				case "//RECORD":
-					this.ajouterRecord(gestion.lectureRecord());
-					break;
-				default:
-					throw new Exception("Erreur : entete non reconu");
-				}
-			}
-
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-
-		System.out.println("Il y a " + listeRecord.size() + " records enregisté");
-		System.out.println("Fin lecture  partie obligatoire");
-		gestion.fermerFichier();
-		System.out.println("Fichier fermer");
-
+	public String getNomFichier() {
+		return nomFichier;
 	}
 
-	public void sauvegarderJoueur() {
-		System.out.println("Debut ecriture");
-		gestion.vidageFichier();
-		try {
-			gestion.ecrireId(this.id);
-			gestion.ecrireNom(this.nom);
-			for (int i = 0; i < this.listeRecord.size(); i++) {
-				gestion.ecrireRecord(this.listeRecord.get(i));
-			}
+	public String getId() {
+		return id;
+	}
 
-			System.out.println("Fin ecriture");
-		} catch (Exception e) {
+	public String getNom() {
+		return nom;
+	}
 
-		}
+	public List<MeilleurScoreNiveau> getListeRecord() {
+		return listeRecord;
 	}
 
 	@Override
 	public String toString() {
-		return "Joueur\nid=" + id + "\nnom=" + nom + "\nlisteRecord=" + listeRecord;
+		return "Joueur \n	nomFichier=" + nomFichier + "\n	id=" + id + "\n	nom=" + nom + "\n	listeRecord="
+				+ listeRecord;
 	}
 
 }

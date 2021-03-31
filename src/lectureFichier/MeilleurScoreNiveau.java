@@ -6,15 +6,16 @@ public class MeilleurScoreNiveau {
 	private int meilleurScrore;
 	private int meilleurTemps;
 	
-	
 	public MeilleurScoreNiveau(String id) {
 		this.id = id;
+		this.nomNiveau = "N/A";
 		this.meilleurScrore = 0;
 		this.meilleurTemps = 0;
 	}
 	
-	public MeilleurScoreNiveau(String id, int meilleurScrore, int meilleurTemps) {
+	public MeilleurScoreNiveau(String id,String nomNiveau, int meilleurScrore, int meilleurTemps) {
 		this.id = id;
+		this.nomNiveau = nomNiveau;
 		this.meilleurScrore = meilleurScrore;
 		this.meilleurTemps = meilleurTemps;
 	}
