@@ -15,17 +15,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class FichierXml {
-
-	public static void main(String[] args) throws Exception {
-		Niveau niveau = lireNiveau("./fic/test2XML");
-		System.out.println(niveau);
-		// ecrireNiveau(niveau);
-
-		Joueur joueur = lireJoueur("./fic/testXML3");
-		System.out.println(joueur);
-		// ecrireJoueur(joueur);
-	}
+public class GestionFichierXML {
 
 	public static Niveau lireNiveau(String nomFichier) throws Exception {
 		Niveau niveau = null;
@@ -44,11 +34,8 @@ public class FichierXml {
 		}
 
 		id = lectureID(doc.getElementsByTagName("ID"));
-
 		nom = lectureNom(doc.getElementsByTagName("NOM"));
-
 		map = lireMap(doc.getElementsByTagName("MAP"));
-
 		niveau = new Niveau(nomFichier, id, nom, map);
 
 		try {
@@ -73,28 +60,119 @@ public class FichierXml {
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(inputFile);
 		doc.getDocumentElement().normalize();
-		System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+
+		if (doc.getDocumentElement().getNodeName() != "Joueur") {
+			throw new Exception("Erreur : pas le bon document : " + doc.getDocumentElement().getNodeName());
+		}
 
 		id = lectureID(doc.getElementsByTagName("ID"));
 		nom = lectureNom(doc.getElementsByTagName("NOM"));
-
 		joueur = new Joueur(nomFichier, id, nom);
+
 		NodeList nodeList = doc.getElementsByTagName("Record");
 		if (nodeList.getLength() > 0) {
 			try {
 				for (int numRecord = 0; numRecord < nodeList.getLength(); numRecord++) {
 					joueur.ajouterRecord(lireRecord(doc.getElementsByTagName("Record").item(numRecord)));
 				}
-
 			} catch (Exception e) {
 				System.out.println(e);
-				joueur = null;
+				System.out.println("Imposible de lire partie optionnel");
 			}
 		} else {
 			System.out.println("Pas de Recors a lire");
 		}
 
 		return joueur;
+	}
+
+	private static String lectureID(NodeList idNode) throws Exception {
+		String idString = idNode.item(0).getTextContent();
+		String autorisation = "^[0-9]{10}$";
+
+		if (idString.length() != 10) {
+			throw new Exception("Erreur : ID pas de la bonne taille");
+		}
+		if (!idString.matches(autorisation)) {
+			throw new Exception("Erreur : ID avec des caractere interdit");
+		}
+
+		return idString;
+	}
+
+	private static String lectureNom(NodeList nomNode) throws Exception {
+		String nomString = nomNode.item(0).getTextContent();
+		String autorisation = "^[0-9a-zA-Z]{1,20}$";
+
+		if (!nomString.matches(autorisation)) {
+			throw new Exception("Erreur : nom avec des caractere interdit");
+		}
+
+		return nomString;
+	}
+
+	private static boolean[][] lireMap(NodeList mapNode) throws Exception {
+		boolean[][] map = new boolean[Niveau.largeurMap][Niveau.longueurMap];
+		String ligneMapString = null;
+		Element mapElement = (Element) mapNode.item(0);
+
+		if (mapElement.getChildNodes().getLength() == (Niveau.largeurMap * 2 + 1)) {
+
+			for (int largeur = 0; largeur < Niveau.largeurMap; largeur++) {
+
+				ligneMapString = mapElement.getElementsByTagName("Ligne" + String.format("%02d", largeur)).item(0)
+						.getTextContent();
+
+				if (ligneMapString == null) {
+					throw new Exception("Erreur : Ligne vide");
+				}
+
+				if (ligneMapString.length() != Niveau.longueurMap) {
+					throw new Exception("Erreur : La ligne " + ligneMapString + " n'est pas a la bonne taille");
+				}
+
+				for (int longueur = 0; longueur < Niveau.longueurMap; longueur++) {
+					if (ligneMapString.charAt(longueur) == '0' || ligneMapString.charAt(longueur) == '1') {
+						map[largeur][longueur] = ligneMapString.charAt(longueur) == '1';
+					} else {
+						throw new Exception("Erreur : le caractere " + ligneMapString.charAt(longueur)
+								+ " est interdit dans une map");
+					}
+
+				}
+
+			}
+		} else {
+			throw new Exception("Erreur : Largeur de la map pas a la bonne taille"
+					+ (mapElement.getChildNodes().getLength() - 1) / 2);
+		}
+
+		return map;
+	}
+
+	private static MeilleurScoreNiveau lireRecord(Node recordNode) {
+		String id = null;
+		Element recordElement = (Element) recordNode;
+		id = recordElement.getElementsByTagName("ID_MAP").item(0).getTextContent();
+
+		MeilleurScoreNiveau record = new MeilleurScoreNiveau(id);
+		record.setNomNiveau(recordElement.getElementsByTagName("NOM_MAP").item(0).getTextContent());
+		record.setMeilleurScrore(
+				Integer.parseInt(recordElement.getElementsByTagName("MeilleurScroreMap").item(0).getTextContent()));
+		record.setMeilleurTemps(
+				Integer.parseInt(recordElement.getElementsByTagName("MeilleurTempsMap").item(0).getTextContent()));
+
+		return record;
+	}
+
+	private static int lectureScore(NodeList scoreNode) throws Exception {
+		String scoreString = scoreNode.item(0).getTextContent();
+		return Integer.parseInt(scoreString);
+	}
+
+	private static int lectureTemps(NodeList tempsNode) throws Exception {
+		String tempsString = tempsNode.item(0).getTextContent();
+		return Integer.parseInt(tempsString);
 	}
 
 	public static void ecrireNiveau(Niveau niveau) {
@@ -189,94 +267,5 @@ public class FichierXml {
 		Element node = doc.createElement(name);
 		node.appendChild(doc.createTextNode(value));
 		return node;
-	}
-
-	private static String lectureID(NodeList idNode) throws Exception {
-		String idString = idNode.item(0).getTextContent();
-		String autorisation = "^[0-9]{10}$";
-
-		if (idString.length() != 10) {
-			throw new Exception("Erreur : ID pas de la bonne taille");
-		}
-		if (!idString.matches(autorisation)) {
-			throw new Exception("Erreur : ID avec des caractere interdit");
-		}
-
-		return idString;
-	}
-
-	private static String lectureNom(NodeList nomNode) throws Exception {
-		String nomString = nomNode.item(0).getTextContent();
-		String autorisation = "^[0-9a-zA-Z]{1,20}$";
-
-		if (!nomString.matches(autorisation)) {
-			throw new Exception("Erreur : nom avec des caractere interdit");
-		}
-
-		return nomString;
-	}
-
-	private static boolean[][] lireMap(NodeList mapNode) throws Exception {
-		boolean[][] map = new boolean[Niveau.largeurMap][Niveau.longueurMap];
-		String ligneMapString = null;
-		Element mapElement = (Element) mapNode.item(0);
-
-		if (mapElement.getChildNodes().getLength() == (Niveau.largeurMap * 2 + 1)) {
-
-			for (int largeur = 0; largeur < Niveau.largeurMap; largeur++) {
-
-				ligneMapString = mapElement.getElementsByTagName("Ligne" + String.format("%02d", largeur)).item(0)
-						.getTextContent();
-
-				if (ligneMapString == null) {
-					throw new Exception("Erreur : Ligne vide");
-				}
-
-				if (ligneMapString.length() != Niveau.longueurMap) {
-					throw new Exception("Erreur : La ligne " + ligneMapString + " n'est pas a la bonne taille");
-				}
-
-				for (int longueur = 0; longueur < Niveau.longueurMap; longueur++) {
-					if (ligneMapString.charAt(longueur) == '0' || ligneMapString.charAt(longueur) == '1') {
-						map[largeur][longueur] = ligneMapString.charAt(longueur) == '1';
-					} else {
-						throw new Exception("Erreur : le caractere " + ligneMapString.charAt(longueur)
-								+ " est interdit dans une map");
-					}
-
-				}
-
-			}
-		} else {
-			throw new Exception("Erreur : Largeur de la map pas a la bonne taille"
-					+ (mapElement.getChildNodes().getLength() - 1) / 2);
-		}
-
-		return map;
-	}
-
-	private static MeilleurScoreNiveau lireRecord(Node recordNode) {
-		String id = null;
-		Element recordElement = (Element) recordNode;
-		id = recordElement.getElementsByTagName("ID_MAP").item(0).getTextContent();
-
-		MeilleurScoreNiveau record = new MeilleurScoreNiveau(id);
-		record.setNomNiveau(recordElement.getElementsByTagName("NOM_MAP").item(0).getTextContent());
-		record.setMeilleurScrore(
-				Integer.parseInt(recordElement.getElementsByTagName("MeilleurScroreMap").item(0).getTextContent()));
-		record.setMeilleurTemps(
-				Integer.parseInt(recordElement.getElementsByTagName("MeilleurTempsMap").item(0).getTextContent()));
-
-		return record;
-	}
-
-	private static int lectureScore(NodeList scoreNode) {
-		String scoreString = scoreNode.item(0).getTextContent();
-		return Integer.parseInt(scoreString);
-	}
-
-	private static int lectureTemps(NodeList tempsNode) {
-		String tempsString = tempsNode.item(0).getTextContent();
-		return Integer.parseInt(tempsString);
 	}
 }

@@ -24,6 +24,7 @@ public class Niveau {
 		if (meilleurScore >= this.meilleurScore) {
 			this.meilleurScore = meilleurScore;
 		} else {
+
 			throw new Exception("Erreur : meilleurTempsEnSeconde plus grand");
 		}
 	}
@@ -61,10 +62,15 @@ public class Niveau {
 		return meilleurTempsEnSeconde;
 	}
 
+	public boolean equals(Niveau niveau) {
+		return (this.id == niveau.getId());
+	}
+
 	@Override
 	public String toString() {
-		return "Niveau \n	nomFichier=" + nomFichier + "\n	id=" + id + "\n	nom=" + nom + "\n	map=	" + toStringMap()
-				+ "\n	meilleurScore=" + meilleurScore + "\n	meilleurTempsEnSeconde=" + meilleurTempsEnSeconde;
+		return "\nNiveau \n	nomFichier=" + nomFichier + "\n	id=" + id + "\n	nom=" + nom + "\n	meilleurScore="
+				+ meilleurScore + "\n	meilleurTempsEnSeconde=" + meilleurTempsEnSeconde + "\n	map=	"
+				+ toStringMap();
 	}
 
 	private String toStringMap() {
@@ -77,4 +83,5 @@ public class Niveau {
 		}
 		return string;
 	}
+
 }

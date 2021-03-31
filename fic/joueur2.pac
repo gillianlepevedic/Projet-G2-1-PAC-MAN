@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <Joueur xmlns="https://iut-lannion.univ-rennes1.fr/">
-    <ID>0000000125</ID>
-    <NOM>UnMecTropFort</NOM>
+    <ID>0000000126</ID>
+    <NOM>Lautres</NOM>
     <Record>
         <ID_MAP>0000000018</ID_MAP>
         <NOM_MAP>niveau1</NOM_MAP>
@@ -9,21 +9,21 @@
         <MeilleurTempsMap>125</MeilleurTempsMap>
     </Record>
     <Record>
-        <ID_MAP>0000001425</ID_MAP>
-        <NOM_MAP>niveau1</NOM_MAP>
-        <MeilleurScroreMap>12542</MeilleurScroreMap>
-        <MeilleurTempsMap>125</MeilleurTempsMap>
-    </Record>
-    <Record>
-        <ID_MAP>0000000145</ID_MAP>
+        <ID_MAP>0000000019</ID_MAP>
         <NOM_MAP>niveau2</NOM_MAP>
         <MeilleurScroreMap>12542</MeilleurScroreMap>
-        <MeilleurTempsMap>125</MeilleurTempsMap>
+        <MeilleurTempsMap>101</MeilleurTempsMap>
     </Record>
     <Record>
-        <ID_MAP>0000000154</ID_MAP>
+        <ID_MAP>0000000020</ID_MAP>
         <NOM_MAP>niveau3</NOM_MAP>
         <MeilleurScroreMap>12542</MeilleurScroreMap>
-        <MeilleurTempsMap>125</MeilleurTempsMap>
+        <MeilleurTempsMap>165</MeilleurTempsMap>
+    </Record>
+    <Record>
+        <ID_MAP>0000000021</ID_MAP>
+        <NOM_MAP>niveau4</NOM_MAP>
+        <MeilleurScroreMap>12542</MeilleurScroreMap>
+        <MeilleurTempsMap>56</MeilleurTempsMap>
     </Record>
 </Joueur>

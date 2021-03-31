@@ -13,43 +13,72 @@ public class FichierCharger {
 		this.joueurConecter = null;
 	}
 
-	public void chargerNiveau(String nomfic) {
-
-		Niveau niveau = new Niveau(nomfic);
-		try {
-			niveau.lectureNiveau();
-			ajouterNiveau(niveau);
-		} catch (Exception e) {
-			System.out.println(e);
-			System.out.println("Chargement impossible");
-		}
-	}
-
-	public void sauvegardeNiveau(String id) {
-		for (int i = 0; i < niveauCharger.size(); i++) {
-			if (id == this.niveauCharger.get(i).getId()) {
-				this.niveauCharger.get(i).sauvegarderNiveau();
+	public Niveau sauvegardeNiveau(String id) throws Exception {
+		boolean sauvegarder = false;
+		Niveau retourneNiveau = null;
+		
+		for ( Niveau niveau : niveauCharger) {
+			if (id.equals(niveau.getId())) {
+				GestionFichierXML.ecrireNiveau(niveau);
+				retourneNiveau = niveau;
+				sauvegarder = true;
 			}
 		}
-	}
 
-	public void chargerJoueur(String nomfic) {
-
-		Joueur joueur = new Joueur(nomfic);
-		try {
-			joueur.lectureJoueur();
-			this.joueurConecter = joueur;
-		} catch (Exception e) {
-			System.out.println(e);
-			System.out.println("Chargement impossible");
+		if (sauvegarder) {
+			System.out.println("Sauvegarde reussi");
+		} else {
+			throw new Exception("Erreur : niveau pas trouver");
 		}
+		
+		return retourneNiveau;
+	}
+	
+	public Niveau dechargerNiveau(String id) throws Exception {
+		Niveau niveausup= sauvegardeNiveau(id);
+		
+		
+		if (this.niveauCharger.contains(niveausup)) {
+			this.niveauCharger.remove(niveausup);
+		}else {
+			throw new Exception("Erreur : niveau pas trouve");
+		}
+		System.out.println("Supression reussi");
+		return niveausup;
+	}
+	
+	
+
+	public Joueur chargerJoueur(String nomfic) throws Exception {
+		Joueur joueur = GestionFichierXML.lireJoueur(nomfic);
+		if (joueur == null) {
+			throw new Exception("Erreur joueur est null");
+		}
+		if (this.joueurConecter != null) {
+			throw new Exception("Erreur joueur dejas charger");
+		}
+
+		this.joueurConecter = joueur;
+		return joueur;
 	}
 
-	public void sauvegarderJoueur() {
-		this.joueurConecter.sauvegarderJoueur();
+	public Joueur sauvegarderJoueur() throws Exception {
+		if (this.joueurConecter == null) {
+			throw new Exception("Pas de joueur connecte");
+		}
+
+		GestionFichierXML.ecrireJoueur(this.joueurConecter);
+		return this.joueurConecter;
 	}
 
-	private void ajouterNiveau(Niveau niveau) throws Exception {
+	public Joueur dechargerJoueur() throws Exception {
+		Joueur joueursupp = sauvegarderJoueur();
+		this.joueurConecter = null;
+		return joueursupp;
+	}
+
+	public Niveau ajouterNiveau(String nomfichier) throws Exception {
+		Niveau niveau = GestionFichierXML.lireNiveau(nomfichier);
 		if (niveau != null) {
 			if (this.niveauCharger.size() < maxElement) {
 				this.niveauCharger.add(niveau);
@@ -57,8 +86,10 @@ public class FichierCharger {
 				throw new Exception("Erreur : Liste plein");
 			}
 		} else {
-			System.out.println("Record null");
+			throw new Exception("Erreur : Niveau null");
 		}
+		
+		return niveau;
 	}
 
 	public List<Niveau> getNiveauCharger() {
@@ -71,6 +102,6 @@ public class FichierCharger {
 
 	@Override
 	public String toString() {
-		return "FichierCharger [niveauCharger=" + niveauCharger + ", joueurConecter=" + joueurConecter + "]";
+		return "FichierCharger \nNiveauCharger\n" + niveauCharger + "\n" + joueurConecter + "\n";
 	}
 }

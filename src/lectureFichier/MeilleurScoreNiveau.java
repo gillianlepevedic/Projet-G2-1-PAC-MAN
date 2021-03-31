@@ -50,7 +50,7 @@ public class MeilleurScoreNiveau {
 
 	@Override
 	public String toString() {
-		return "	id=" + id + "\n	nomNiveau=" + nomNiveau + "\n	meilleurScrore=" + meilleurScrore
-				+ "\n	meilleurTemps=" + meilleurTemps + "\n";
+		return "\n		id=" + id + "\n		nomNiveau=" + nomNiveau + "\n		meilleurScrore=" + meilleurScrore
+				+ "\n		meilleurTemps=" + meilleurTemps + "\n		";
 	}
 }

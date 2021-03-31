@@ -47,8 +47,8 @@ public class Joueur {
 
 	@Override
 	public String toString() {
-		return "Joueur \n	nomFichier=" + nomFichier + "\n	id=" + id + "\n	nom=" + nom + "\n	listeRecord="
-				+ listeRecord;
+		return "\nJoueur \n	nomFichier=" + nomFichier + "\n	id=" + id + "\n	nom=" + nom + "\n	listeRecord="
+				+ listeRecord + "\n";
 	}
 
 }
