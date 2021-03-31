@@ -16,6 +16,7 @@ public class Main {
 			jeux.dechargerNiveau("0000000019");
 			jeux.dechargerNiveau("0000000018");
 			jeux.dechargerJoueur();
+			jeux.dechargerNiveau("0000000018");
 			System.out.println(jeux);
 		} catch (Exception e) {
 			System.out.println(e);
