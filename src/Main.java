@@ -8,6 +8,8 @@ public class Main {
 		try {
 			jeux.ajouterNiveau("./fic/niveau1.pac");
 			jeux.chargerJoueur("./fic/joueur1.pac");
+			jeux.ajouterNiveau("./fic/niveau2.pac");
+			
 			//jeux.ajouterNiveau("./fic/niveau2.pac");
 			//jeux.dechargerJoueur();
 			//jeux.chargerJoueur("./fic/joueur2.pac");
@@ -22,7 +24,7 @@ public class Main {
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-
+		System.out.println(jeux);
 	}
-
+	
 }

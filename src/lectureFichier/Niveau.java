@@ -11,34 +11,53 @@ public class Niveau {
 	private int meilleurTempsEnSeconde;
 
 	public Niveau(String nomFichier, String id, String nom, boolean[][] map) {
-		this.nomFichier = nomFichier;
-		this.id = id;
-		this.nom = nom;
-		this.map = map;
-
-		meilleurTempsEnSeconde = 0;
-		meilleurScore = 0;
+			this.nomFichier = nomFichier;
+			this.id = id;
+			this.nom = nom;
+			this.map = map;
+	
+			meilleurTempsEnSeconde = 0;
+			meilleurScore = 0;
 	}
 
 	public boolean mapValide(boolean[][] map) {
-		boolean norme = true;
-		
-		for (int i=0; i<Niveau.largeurMap; i++) {
-			if (!map[i][0] && !map[i][Niveau.longueurMap-1]) {
-				norme = false;
+		boolean valide = true;
+
+		for (int i = 0; i < Niveau.largeurMap; i++) {
+			if (!map[i][0] || !map[i][Niveau.longueurMap - 1]) {
+				valide = false;
 			}
 		}
-		
-		/*for (int largeur=0; largeur<= Niveau.largeurMap; largeur += Niveau.largeurMap ) {
-			for (int longeur=0; longeur<Niveau.largeurMap; longeur++) {
-				if (!map[largeur][longeur] && !map[largeur][Niveau.longueurMap-1]) {
-					
-					norme = false;
+
+		for (int largeur = 0; largeur <= Niveau.largeurMap; largeur += Niveau.largeurMap - 1) {
+			for (int longeur = 0; longeur < Niveau.longueurMap; longeur++) {
+				if (!map[largeur][longeur]) {
+					valide = false;
 				}
 			}
-		}*/
-		
-		return norme;
+		}
+
+		for (int i = ((Niveau.longueurMap) / 2) - 1; i <= ((Niveau.longueurMap) / 2) + 1; i++) {
+			if (map[((Niveau.largeurMap) / 2)][i]) {
+				valide = false;
+			}
+		}
+
+		for (int i = ((Niveau.longueurMap) / 2) - 2; i <= ((Niveau.longueurMap) / 2) + 2; i++) {
+			if (!map[((Niveau.largeurMap) / 2) - 1][i]) {
+				valide = false;
+			}
+			if (!map[((Niveau.largeurMap) / 2) + 1][i]) {
+				valide = false;
+			}
+		}
+
+		if (!map[(Niveau.largeurMap) / 2][(Niveau.longueurMap / 2) - 2]
+				|| !map[(Niveau.largeurMap) / 2][(Niveau.longueurMap / 2) + 2]) {
+			valide = false;
+		}
+
+		return valide;
 	}
 
 	public void setMeilleurScore(int meilleurScore) throws Exception {

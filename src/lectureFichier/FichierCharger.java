@@ -15,6 +15,7 @@ public class FichierCharger {
 
 	public Niveau ajouterNiveau(String nomfichier) throws Exception {
 		Niveau niveau = GestionFichierXML.lireNiveau(nomfichier);
+		
 		if (niveau != null) {
 			if (this.niveauCharger.size() < maxElement) {
 				this.niveauCharger.add(niveau);
@@ -99,6 +100,6 @@ public class FichierCharger {
 
 	@Override
 	public String toString() {
-		return "FichierCharger \nNiveauCharger\n" + niveauCharger + "\n" + joueurConecter + "\n";
+		return "NiveauCharger\n" + niveauCharger + "\n" +"joueurConecter" + joueurConecter + "\n";
 	}
 }

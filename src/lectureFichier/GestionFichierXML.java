@@ -51,6 +51,11 @@ public class GestionFichierXML {
 		nom = lectureNom(doc.getElementsByTagName("NOM"));
 		map = lireMap(doc.getElementsByTagName("MAP"));
 		niveau = new Niveau(nomFichier, id, nom, map);
+		
+		if (!niveau.mapValide(niveau.getMap())) {
+			niveau = null;
+			throw new Exception("Erreur map non valide");
+		}
 
 		try {
 			niveau.setMeilleurScore(lectureScore(doc.getElementsByTagName("MeilleurScore")));
