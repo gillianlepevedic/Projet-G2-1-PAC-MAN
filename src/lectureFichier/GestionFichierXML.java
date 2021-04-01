@@ -240,6 +240,7 @@ public class GestionFichierXML {
 				}
 
 				if (ligneMapString.length() != Niveau.longueurMap) {
+					System.out.println(ligneMapString.length());
 					throw new Exception("Erreur : La ligne " + ligneMapString + " n'est pas a la bonne taille");
 				}
 
@@ -334,6 +335,13 @@ public class GestionFichierXML {
 		return mapNode;
 	}
 
+	/**
+	 * Creer un Node Record et y mets toute les valeurs dedans
+	 * 
+	 * @param document
+	 * @param record
+	 * @return
+	 */
 	private static Node formaterRecord(Document document, MeilleurScoreNiveau record) {
 		Element recordNode = document.createElement("Record");
 
@@ -347,6 +355,15 @@ public class GestionFichierXML {
 		return recordNode;
 	}
 
+	/**
+	 * Foramt le nom et les valeur en format XML
+	 * 
+	 * @param doc
+	 * @param element
+	 * @param name
+	 * @param value
+	 * @return
+	 */
 	private static Node formaterValeur(Document doc, Element element, String name, String value) {
 		Element node = doc.createElement(name);
 		node.appendChild(doc.createTextNode(value));

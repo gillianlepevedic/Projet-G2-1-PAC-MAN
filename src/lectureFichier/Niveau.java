@@ -1,12 +1,12 @@
 package lectureFichier;
 
 public class Niveau {
-	final static int longueurMap = 25;
+	final static int longueurMap = 31;
 	final static int largeurMap = 25;
 	private final String nomFichier;
 	private final String id;
 	private final String nom;
-	private final boolean[][] map;
+	final boolean[][] map;
 	private int meilleurScore;
 	private int meilleurTempsEnSeconde;
 
@@ -18,6 +18,27 @@ public class Niveau {
 
 		meilleurTempsEnSeconde = 0;
 		meilleurScore = 0;
+	}
+
+	public boolean mapValide(boolean[][] map) {
+		boolean norme = true;
+		
+		for (int i=0; i<Niveau.largeurMap; i++) {
+			if (!map[i][0] && !map[i][Niveau.longueurMap-1]) {
+				norme = false;
+			}
+		}
+		
+		/*for (int largeur=0; largeur<= Niveau.largeurMap; largeur += Niveau.largeurMap ) {
+			for (int longeur=0; longeur<Niveau.largeurMap; longeur++) {
+				if (!map[largeur][longeur] && !map[largeur][Niveau.longueurMap-1]) {
+					
+					norme = false;
+				}
+			}
+		}*/
+		
+		return norme;
 	}
 
 	public void setMeilleurScore(int meilleurScore) throws Exception {
@@ -71,8 +92,8 @@ public class Niveau {
 
 	private String toStringMap() {
 		String string = "";
-		for (int j = 0; j < 25; j++) {
-			for (int i = 0; i < 25; i++) {
+		for (int j = 0; j < Niveau.largeurMap; j++) {
+			for (int i = 0; i < Niveau.longueurMap; i++) {
 				string = string + (this.map[j][i] ? 1 : 0);
 			}
 			string = string + "\n		";
