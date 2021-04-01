@@ -15,6 +15,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import Joueur.Joueur;
+import Joueur.MeilleurScoreNiveau;
+import Niveau.Map;
+import Niveau.Niveau;
+
 /**
  * Classe technique Lit et ecrit des fichiers .pac en XML Les fichiers doivent
  * correspond aux caractéristiques des fichiers niveau ou joueur.
@@ -49,13 +54,11 @@ public class GestionFichierXML {
 
 		id = lectureID(doc.getElementsByTagName("ID"));
 		nom = lectureNom(doc.getElementsByTagName("NOM"));
+
+		niveau = new Niveau(nomFichier, id, nom);
+
 		map = lireMap(doc.getElementsByTagName("MAP"));
-		niveau = new Niveau(nomFichier, id, nom, map);
-		
-		if (!niveau.mapValide(niveau.getMap())) {
-			niveau = null;
-			throw new Exception("Erreur map non valide");
-		}
+		niveau.setMap(new Map(map));
 
 		try {
 			niveau.setMeilleurScore(lectureScore(doc.getElementsByTagName("MeilleurScore")));
@@ -77,7 +80,6 @@ public class GestionFichierXML {
 	 * @return Joueur
 	 * @throws Exception si la partie obligatoire est ilisible
 	 */
-
 	public static Joueur lireJoueur(String nomFichier) throws Exception {
 		Joueur joueur = null;
 		String id = null;
@@ -99,16 +101,17 @@ public class GestionFichierXML {
 
 		NodeList nodeList = doc.getElementsByTagName("Record");
 		if (nodeList.getLength() > 0) {
-			try {
-				for (int numRecord = 0; numRecord < nodeList.getLength(); numRecord++) {
+			for (int numRecord = 0; numRecord < nodeList.getLength(); numRecord++) {
+				try {
 					joueur.ajouterRecord(lireRecord(doc.getElementsByTagName("Record").item(numRecord)));
+				} catch (Exception e) {
+					System.out.println(e);
+					System.out.println("Imposible de lire partie optionnel");
 				}
-			} catch (Exception e) {
-				System.out.println(e);
-				System.out.println("Imposible de lire partie optionnel");
 			}
+
 		} else {
-			System.out.println("Pas de Recors a lire");
+			System.out.println("Pas de Record a lire");
 		}
 
 		return joueur;
@@ -229,13 +232,13 @@ public class GestionFichierXML {
 	 *                   caracter interdit
 	 */
 	private static boolean[][] lireMap(NodeList mapNode) throws Exception {
-		boolean[][] map = new boolean[Niveau.largeurMap][Niveau.longueurMap];
+		boolean[][] map = new boolean[Map.getLargeurmap()][Map.getLongueurmap()];
 		String ligneMapString = null;
 		Element mapElement = (Element) mapNode.item(0);
 
-		if (mapElement.getChildNodes().getLength() == (Niveau.largeurMap * 2 + 1)) {
+		if (mapElement.getChildNodes().getLength() == (Map.getLargeurmap() * 2 + 1)) {
 
-			for (int largeur = 0; largeur < Niveau.largeurMap; largeur++) {
+			for (int largeur = 0; largeur < Map.getLargeurmap(); largeur++) {
 
 				ligneMapString = mapElement.getElementsByTagName("Ligne" + String.format("%02d", largeur)).item(0)
 						.getTextContent();
@@ -244,12 +247,12 @@ public class GestionFichierXML {
 					throw new Exception("Erreur : Ligne vide");
 				}
 
-				if (ligneMapString.length() != Niveau.longueurMap) {
+				if (ligneMapString.length() != Map.getLongueurmap()) {
 					System.out.println(ligneMapString.length());
 					throw new Exception("Erreur : La ligne " + ligneMapString + " n'est pas a la bonne taille");
 				}
 
-				for (int longueur = 0; longueur < Niveau.longueurMap; longueur++) {
+				for (int longueur = 0; longueur < Map.getLongueurmap(); longueur++) {
 					if (ligneMapString.charAt(longueur) == '0' || ligneMapString.charAt(longueur) == '1') {
 						map[largeur][longueur] = ligneMapString.charAt(longueur) == '1';
 					} else {
@@ -325,9 +328,9 @@ public class GestionFichierXML {
 		Element mapNode = fichier.createElement("MAP");
 		String tmp;
 
-		for (int largeur = 0; largeur < Niveau.largeurMap; largeur++) {
+		for (int largeur = 0; largeur < Map.getLargeurmap(); largeur++) {
 			tmp = "";
-			for (int longueur = 0; longueur < Niveau.longueurMap; longueur++) {
+			for (int longueur = 0; longueur < Map.getLongueurmap(); longueur++) {
 				if (mapBool[largeur][longueur]) {
 					tmp += "1";
 				} else {

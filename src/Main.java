@@ -1,3 +1,4 @@
+import Joueur.MeilleurScoreNiveau;
 import lectureFichier.FichierCharger;
 
 public class Main {
@@ -9,22 +10,25 @@ public class Main {
 			jeux.ajouterNiveau("./fic/niveau1.pac");
 			jeux.chargerJoueur("./fic/joueur1.pac");
 			jeux.ajouterNiveau("./fic/niveau2.pac");
-			
-			//jeux.ajouterNiveau("./fic/niveau2.pac");
-			//jeux.dechargerJoueur();
 			//jeux.chargerJoueur("./fic/joueur2.pac");
+			
+			
+			jeux.getJoueurConecter().ajouterRecord(new MeilleurScoreNiveau("0000000154", "niveau2", 154748845,1544));
+
+			System.out.println(jeux);
+			jeux.getJoueurConecter().suprimerRecord("0000000154");
+			
+			
+
 			System.out.println(jeux);
 
 			//jeux.dechargerNiveau("0000000019");
 			//jeux.dechargerNiveau("0000000018");
 			//jeux.dechargerJoueur();
-			
-			
-			System.out.println(jeux.getNiveauCharger().get(0).mapValide(jeux.getNiveauCharger().get(0).getMap()));
+
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		System.out.println(jeux);
 	}
 	
 }

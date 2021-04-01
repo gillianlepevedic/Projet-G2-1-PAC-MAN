@@ -3,61 +3,73 @@ package lectureFichier;
 import java.util.ArrayList;
 import java.util.List;
 
+import Joueur.Joueur;
+import Niveau.Niveau;
+
+/**
+ * 
+ * @author gillian
+ *
+ */
 public class FichierCharger {
 	final static int maxElement = 25;
 	private List<Niveau> niveauCharger;
 	private Joueur joueurConecter;
 
 	public FichierCharger() {
-		niveauCharger = new ArrayList<>();
+		niveauCharger = new ArrayList<>(FichierCharger.maxElement);
 		this.joueurConecter = null;
 	}
 
 	public Niveau ajouterNiveau(String nomfichier) throws Exception {
 		Niveau niveau = GestionFichierXML.lireNiveau(nomfichier);
-		
-		if (niveau != null) {
-			if (this.niveauCharger.size() < maxElement) {
-				this.niveauCharger.add(niveau);
-			} else {
-				throw new Exception("Erreur : Liste plein");
-			}
-		} else {
+
+		if (niveau == null) {
 			throw new Exception("Erreur : Niveau null");
 		}
+
+		if (this.niveauCharger.size() > maxElement) {
+			throw new Exception("Erreur : Liste plein");
+		}
+
+		this.niveauCharger.add(niveau);
 
 		return niveau;
 	}
 
 	public Niveau sauvegardeNiveau(String id) throws Exception {
 		boolean sauvegarder = false;
-		Niveau retourneNiveau = null;
+		Niveau niveauSauvegarder = null;
 
 		for (Niveau niveau : niveauCharger) {
 			if (id.equals(niveau.getId())) {
-				GestionFichierXML.ecrireNiveau(niveau);
-				retourneNiveau = niveau;
+				niveauSauvegarder = niveau;
+				GestionFichierXML.ecrireNiveau(niveauSauvegarder);
 				sauvegarder = true;
 			}
 		}
 
-		if (sauvegarder) {
-			System.out.println("Sauvegarde reussi");
-		} else {
+		if (!sauvegarder) {
 			throw new Exception("Erreur : niveau pas trouver");
 		}
 
-		return retourneNiveau;
+		if (!niveauSauvegarder.equals(GestionFichierXML.lireNiveau(niveauSauvegarder.getNomFichier()))) {
+			throw new Exception("Erreur : sauvegarde different de l'objet");
+		}
+
+		System.out.println("Sauvegarde reussi");
+
+		return niveauSauvegarder;
 	}
 
 	public Niveau dechargerNiveau(String id) throws Exception {
 		Niveau niveausup = sauvegardeNiveau(id);
 
-		if (this.niveauCharger.contains(niveausup)) {
-			this.niveauCharger.remove(niveausup);
-		} else {
+		if (!this.niveauCharger.contains(niveausup)) {
 			throw new Exception("Erreur : niveau pas trouve");
 		}
+
+		this.niveauCharger.remove(niveausup);
 		System.out.println("Supression reussi");
 		return niveausup;
 	}
@@ -81,12 +93,26 @@ public class FichierCharger {
 		}
 
 		GestionFichierXML.ecrireJoueur(this.joueurConecter);
+
+		if (!this.joueurConecter.equals(GestionFichierXML.lireJoueur(this.joueurConecter.getNomFichier()))) {
+			throw new Exception("Erreur : sauvegarde different de l'objet");
+		}
+
+		System.out.println("Sauvegarde reussi");
+
 		return this.joueurConecter;
 	}
 
 	public Joueur dechargerJoueur() throws Exception {
 		Joueur joueursupp = sauvegarderJoueur();
 		this.joueurConecter = null;
+
+		if (this.joueurConecter != null) {
+			throw new Exception("Erreur : impossible de decherger le joueur");
+		}
+
+		System.out.println("Dechergement reussi reussi");
+
 		return joueursupp;
 	}
 
@@ -100,6 +126,6 @@ public class FichierCharger {
 
 	@Override
 	public String toString() {
-		return "NiveauCharger\n" + niveauCharger + "\n" +"joueurConecter" + joueurConecter + "\n";
+		return "NiveauCharger\n" + niveauCharger + "\n" + "joueurConecter" + joueurConecter + "\n";
 	}
 }
