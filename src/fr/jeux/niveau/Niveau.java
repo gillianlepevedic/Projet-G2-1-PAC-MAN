@@ -10,39 +10,44 @@ public class Niveau {
 	private final String id;
 	private final String nom;
 	private Map map;
-	private int meilleurScore;
-	private int meilleurTempsEnSeconde;
+	private RecordNiveau recordNiveau;
 
 	public Niveau(String nomFichier, String id, String nom) {
 		this.nomFichier = nomFichier;
 		this.id = id;
 		this.nom = nom;
+
 		this.map = new Map();
-
-		meilleurTempsEnSeconde = 0;
-		meilleurScore = 0;
-	}
-
-	public void setMeilleurScore(int meilleurScore) throws Exception {
-		if (meilleurScore >= this.meilleurScore) {
-			this.meilleurScore = meilleurScore;
-		} else {
-
-			throw new Exception("Erreur : meilleurTempsEnSeconde plus grand");
-		}
-	}
-
-	public void setMeilleurTempsEnSeconde(int meilleurTempsEnSeconde) throws Exception {
-		if (meilleurTempsEnSeconde >= this.meilleurTempsEnSeconde) {
-			this.meilleurTempsEnSeconde = meilleurTempsEnSeconde;
-		} else {
-			throw new Exception("Erreur : meilleurTempsEnSeconde plus grand");
-		}
+		this.recordNiveau = null;
 
 	}
 
 	public void setMap(Map map) throws Exception {
 		this.map.setMap(map.getMap());
+	}
+
+	public void setRecordNiveau(RecordNiveau recordNiveau) throws Exception {
+
+		if (recordNiveau == null) {
+			throw new Exception("Erreur : record Niveau null");
+		}
+
+		if (this.recordNiveau == null) {
+			this.recordNiveau = recordNiveau;
+		} else {
+
+			if (this.recordNiveau.getMeilleurScrore() > recordNiveau.getMeilleurScrore()) {
+				throw new Exception("Erreur : meilleur score moins bon");
+			}
+
+			if (this.recordNiveau.getIdJoueur() == recordNiveau.getIdJoueur()) {
+				this.recordNiveau.setNomJoueur(recordNiveau.getNomJoueur());
+				this.recordNiveau.setMeilleurScrore(recordNiveau.getMeilleurScrore());
+				this.recordNiveau.setMeilleurTemps(recordNiveau.getMeilleurTemps());
+			} else {
+				this.recordNiveau = recordNiveau;
+			}
+		}
 	}
 
 	public String getNomFichier() {
@@ -57,16 +62,15 @@ public class Niveau {
 		return nom;
 	}
 
-	public int getMeilleurScore() {
-		return meilleurScore;
-	}
-
-	public int getMeilleurTempsEnSeconde() {
-		return meilleurTempsEnSeconde;
-	}
-
 	public int[][] getMap() {
 		return map.getMap();
+	}
+
+	/**
+	 * @return the recordNiveau
+	 */
+	public RecordNiveau getRecordNiveau() {
+		return recordNiveau;
 	}
 
 	@Override
@@ -75,8 +79,6 @@ public class Niveau {
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((map == null) ? 0 : map.hashCode());
-		result = prime * result + meilleurScore;
-		result = prime * result + meilleurTempsEnSeconde;
 		result = prime * result + ((nom == null) ? 0 : nom.hashCode());
 		result = prime * result + ((nomFichier == null) ? 0 : nomFichier.hashCode());
 		return result;
@@ -101,10 +103,6 @@ public class Niveau {
 				return false;
 		} else if (!map.equals(other.map))
 			return false;
-		if (meilleurScore != other.meilleurScore)
-			return false;
-		if (meilleurTempsEnSeconde != other.meilleurTempsEnSeconde)
-			return false;
 		if (nom == null) {
 			if (other.nom != null)
 				return false;
@@ -120,8 +118,8 @@ public class Niveau {
 
 	@Override
 	public String toString() {
-		return "\nNiveau \n	nomFichier=" + nomFichier + "\n	id=" + id + "\n	nom=" + nom + "\n	meilleurScore="
-				+ meilleurScore + "\n	meilleurTempsEnSeconde=" + meilleurTempsEnSeconde + "\n	map=	" + map;
+		return "Niveau \n	nomFichier=" + nomFichier + "\n	id=" + id + "\n	nom=" + nom + "\n	map=	" + map
+				+ "\n	recordNiveau=" + recordNiveau + "\n";
 	}
 
 }

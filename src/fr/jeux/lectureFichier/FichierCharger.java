@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.jeux.joueur.Joueur;
-import fr.jeux.joueur.MeilleurScoreNiveau;
+import fr.jeux.joueur.RecordJoueur;
 import fr.jeux.niveau.Niveau;
 
 /**
@@ -178,7 +178,7 @@ public class FichierCharger {
 	 * @param record
 	 * @throws Exception Si le record est null. Si il est impossible d'ajouter
 	 */
-	public void ajouterRecordJoueur(MeilleurScoreNiveau record) throws Exception {
+	public void ajouterRecordJoueur(RecordJoueur record) throws Exception {
 
 		if (record == null) {
 			throw new Exception("Erreur : record null");
@@ -194,7 +194,7 @@ public class FichierCharger {
 	 * @return retourne le record supprimer
 	 * @throws Exception si id est null. Si impossible de le supprimer
 	 */
-	public MeilleurScoreNiveau supprimerRecordJoueur(String idRecordsupp) throws Exception {
+	public RecordJoueur supprimerRecordJoueur(String idRecordsupp) throws Exception {
 
 		if (idRecordsupp == null) {
 			throw new Exception("Erreur : id null");

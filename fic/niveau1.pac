@@ -29,6 +29,10 @@
         <Ligne23>0111111111111111111111111111100</Ligne23>
         <Ligne24>0000000000000000000000000000000</Ligne24>
     </MAP>
-    <MeilleurScore>12540</MeilleurScore>
-    <MeilleurTemps>125</MeilleurTemps>
+    <RECORD>
+        <ID_JOUEUR>0000000021</ID_JOUEUR>
+        <NOM_JOUEUR>niveau4</NOM_JOUEUR>
+        <MeilleurScroreJoueur>12542</MeilleurScroreJoueur>
+        <MeilleurTempsJoueur>56</MeilleurTempsJoueur>
+    </RECORD>
 </Niveau>

@@ -5,7 +5,7 @@ package fr.jeux.joueur;
  * @author gillian
  *
  */
-public class MeilleurScoreNiveau {
+public class RecordJoueur {
 	final private String id;
 	private String nomNiveau;
 	private int meilleurScrore;
@@ -16,7 +16,7 @@ public class MeilleurScoreNiveau {
 	 * 
 	 * @param id impossible a changer apres
 	 */
-	public MeilleurScoreNiveau(String id) {
+	public RecordJoueur(String id) {
 		this.id = id;
 		this.nomNiveau = "N/A";
 		this.meilleurScrore = 0;
@@ -31,7 +31,7 @@ public class MeilleurScoreNiveau {
 	 * @param meilleurScrore
 	 * @param meilleurTemps
 	 */
-	public MeilleurScoreNiveau(String id, String nomNiveau, int meilleurScrore, int meilleurTemps) {
+	public RecordJoueur(String id, String nomNiveau, int meilleurScrore, int meilleurTemps) {
 		this.id = id;
 		this.nomNiveau = nomNiveau;
 		this.meilleurScrore = meilleurScrore;
@@ -119,7 +119,7 @@ public class MeilleurScoreNiveau {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		MeilleurScoreNiveau other = (MeilleurScoreNiveau) obj;
+		RecordJoueur other = (RecordJoueur) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

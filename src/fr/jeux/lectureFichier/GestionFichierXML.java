@@ -16,9 +16,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import fr.jeux.joueur.Joueur;
-import fr.jeux.joueur.MeilleurScoreNiveau;
+import fr.jeux.joueur.RecordJoueur;
 import fr.jeux.niveau.Map;
 import fr.jeux.niveau.Niveau;
+import fr.jeux.niveau.RecordNiveau;
 
 /**
  * Classe technique Lit et ecrit des fichiers .pac en XML Les fichiers doivent
@@ -40,7 +41,7 @@ public class GestionFichierXML {
 		Niveau niveau = null;
 		String id = null;
 		String nom = null;
-		int[][] map = null;
+		Map map = new Map();
 
 		File inputFile = new File(nomFichier);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -57,13 +58,19 @@ public class GestionFichierXML {
 
 		niveau = new Niveau(nomFichier, id, nom);
 
-		map = lireMap(doc.getElementsByTagName("MAP"));
-		niveau.setMap(new Map(map));
-
+		map.setMap(lireMap(doc.getElementsByTagName("MAP")));
+		niveau.setMap(map);
+		
+		
+		
+		
 		try {
-			niveau.setMeilleurScore(lectureScore(doc.getElementsByTagName("MeilleurScore")));
-			niveau.setMeilleurTempsEnSeconde(lectureTemps(doc.getElementsByTagName("MeilleurTemps")));
-
+			NodeList nodeList = doc.getElementsByTagName("RECORD");
+			RecordNiveau record = lireRecordNiveau(nodeList.item(0));
+			niveau.setRecordNiveau(record);
+			//niveau.setRecordNiveau(record);
+			
+			
 		} catch (Exception e) {
 			System.out.println(e);
 			System.out.println("Imposible de lire partie optionnel");
@@ -103,7 +110,7 @@ public class GestionFichierXML {
 		if (nodeList.getLength() > 0) {
 			for (int numRecord = 0; numRecord < nodeList.getLength(); numRecord++) {
 				try {
-					joueur.ajouterRecord(lireRecord(doc.getElementsByTagName("Record").item(numRecord)));
+					joueur.ajouterRecord(lireRecordJoueur(doc.getElementsByTagName("Record").item(numRecord)));
 				} catch (Exception e) {
 					System.out.println(e);
 					System.out.println("Imposible de lire partie optionnel");
@@ -134,10 +141,10 @@ public class GestionFichierXML {
 			rootElement.appendChild(formaterValeur(document, rootElement, "ID", niveau.getId()));
 			rootElement.appendChild(formaterValeur(document, rootElement, "NOM", niveau.getNom()));
 			rootElement.appendChild(formaterMap(document, niveau.getMap()));
-			rootElement.appendChild(
-					formaterValeur(document, rootElement, "MeilleurScore", String.valueOf(niveau.getMeilleurScore())));
-			rootElement.appendChild(formaterValeur(document, rootElement, "MeilleurTemps",
-					String.valueOf(niveau.getMeilleurTempsEnSeconde())));
+			
+			rootElement.appendChild(formaterRecordJoueur(document, niveau.getRecordNiveau()));
+			
+			
 			document.appendChild(rootElement);
 
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -168,7 +175,7 @@ public class GestionFichierXML {
 			rootElement.appendChild(formaterValeur(document, rootElement, "NOM", joueur.getNom()));
 
 			for (int numRecord = 0; numRecord < joueur.getListeRecord().size(); numRecord++) {
-				rootElement.appendChild(formaterRecord(document, joueur.getListeRecord().get(numRecord)));
+				rootElement.appendChild(formaterRecordNiveau(document, joueur.getListeRecord().get(numRecord)));
 
 			}
 
@@ -232,13 +239,13 @@ public class GestionFichierXML {
 	 *                   caracter interdit
 	 */
 	private static int[][] lireMap(NodeList mapNode) throws Exception {
-		int[][] map = new int[Map.getLargeurmap()][Map.getLongueurmap()];
+		int[][] map = new int[Map.largeurMap][Map.longueurMap];
 		String ligneMapString = null;
 		Element mapElement = (Element) mapNode.item(0);
 
-		if (mapElement.getChildNodes().getLength() == (Map.getLargeurmap() * 2 + 1)) {
+		if (mapElement.getChildNodes().getLength() == (Map.largeurMap * 2 + 1)) {
 
-			for (int largeur = 0; largeur < Map.getLargeurmap(); largeur++) {
+			for (int largeur = 0; largeur < Map.largeurMap; largeur++) {
 
 				ligneMapString = mapElement.getElementsByTagName("Ligne" + String.format("%02d", largeur)).item(0)
 						.getTextContent();
@@ -247,17 +254,18 @@ public class GestionFichierXML {
 					throw new Exception("Erreur : Ligne vide");
 				}
 
-				if (ligneMapString.length() != Map.getLongueurmap()) {
+				if (ligneMapString.length() != Map.longueurMap) {
 					System.out.println(ligneMapString.length());
 					throw new Exception("Erreur : La ligne " + ligneMapString + " n'est pas a la bonne taille");
 				}
 
-				for (int longueur = 0; longueur < Map.getLongueurmap(); longueur++) {
-					if (ligneMapString.charAt(longueur) == '0' || ligneMapString.charAt(longueur) == '1' ||  ligneMapString.charAt(longueur) == '2') {
-						map[largeur][longueur] = Character.getNumericValue(ligneMapString.charAt(longueur)) ;
+				for (int longueur = 0; longueur < Map.longueurMap; longueur++) {
+					int tmp = Character.getNumericValue(ligneMapString.charAt(longueur));
+					if (tmp == Map.couloir || tmp == Map.mur || tmp == Map.pacGommeFruit || tmp == Map.spawn
+							|| tmp == Map.superPacGomme) {
+						map[largeur][longueur] = tmp;
 					} else {
-						throw new Exception("Erreur : le caractere " + ligneMapString.charAt(longueur)
-								+ " est interdit dans une map");
+						throw new Exception("Erreur : le caractere " + tmp + " est interdit dans une map");
 					}
 
 				}
@@ -270,6 +278,37 @@ public class GestionFichierXML {
 
 		return map;
 	}
+	
+	/**
+	 * Verifie si le RECORD lu repond au critere
+	 * 
+	 * @param recordNode
+	 * @return MeilleurScoreNiveau sinon renvoie Null
+	 */
+	private static RecordNiveau lireRecordNiveau(Node recordNode) {
+		RecordNiveau recordNiveau = null;
+
+		try {
+			String id = null;
+			Element recordElement = (Element) recordNode;
+			id = lectureID(recordElement.getElementsByTagName("ID_JOUEUR"));
+			
+
+			recordNiveau = new RecordNiveau(id);
+
+			recordNiveau.setNomJoueur(lectureNom(recordElement.getElementsByTagName("NOM_JOUEUR")));
+			
+			recordNiveau.setMeilleurScrore(lectureScore(recordElement.getElementsByTagName("MeilleurScroreJoueur")));
+			
+			recordNiveau.setMeilleurTemps(lectureTemps(recordElement.getElementsByTagName("MeilleurTempsJoueur")));
+			
+		} catch (Exception e) {
+			System.out.println(e);
+			System.out.println("record ilisible");
+			recordNiveau = null;
+		}
+		return recordNiveau;
+	}
 
 	/**
 	 * Verifie si le RECORD lu repond au critere
@@ -277,19 +316,19 @@ public class GestionFichierXML {
 	 * @param recordNode
 	 * @return MeilleurScoreNiveau sinon renvoie Null
 	 */
-	private static MeilleurScoreNiveau lireRecord(Node recordNode) {
-		MeilleurScoreNiveau record = null;
+	private static RecordJoueur lireRecordJoueur(Node recordNode) {
+		RecordJoueur record = null;
 
 		try {
 			String id = null;
 			Element recordElement = (Element) recordNode;
-			id = lectureID(recordElement.getElementsByTagName("ID_MAP"));
+			id = lectureID(recordElement.getElementsByTagName("ID_JOUEUR"));
 
-			record = new MeilleurScoreNiveau(id);
+			record = new RecordJoueur(id);
 
 			record.setNomNiveau(lectureNom(recordElement.getElementsByTagName("NOM_MAP")));
-			record.setMeilleurScrore(lectureScore(recordElement.getElementsByTagName("MeilleurScroreMap")));
-			record.setMeilleurTemps(lectureTemps(recordElement.getElementsByTagName("MeilleurTempsMap")));
+			record.setMeilleurScrore(lectureScore(recordElement.getElementsByTagName("MeilleurScroreJoueur")));
+			record.setMeilleurTemps(lectureTemps(recordElement.getElementsByTagName("MeilleurTempsJoueur")));
 
 		} catch (Exception e) {
 			System.out.println(e);
@@ -328,10 +367,10 @@ public class GestionFichierXML {
 		Element mapNode = fichier.createElement("MAP");
 		String tmp;
 
-		for (int largeur = 0; largeur < Map.getLargeurmap(); largeur++) {
+		for (int largeur = 0; largeur < Map.largeurMap; largeur++) {
 			tmp = "";
-			for (int longueur = 0; longueur < Map.getLongueurmap(); longueur++) {
-					tmp += String.valueOf(longueur);
+			for (int longueur = 0; longueur < Map.longueurMap; longueur++) {
+				tmp += String.valueOf(longueur);
 			}
 			mapNode.appendChild(formaterValeur(fichier, mapNode, ("Ligne" + String.format("%02d", largeur)), tmp));
 		}
@@ -346,7 +385,7 @@ public class GestionFichierXML {
 	 * @param record
 	 * @return
 	 */
-	private static Node formaterRecord(Document document, MeilleurScoreNiveau record) {
+	private static Node formaterRecordNiveau(Document document, RecordJoueur record) {
 		Element recordNode = document.createElement("Record");
 
 		recordNode.appendChild(formaterValeur(document, recordNode, "ID_MAP", record.getId()));
@@ -355,6 +394,19 @@ public class GestionFichierXML {
 				formaterValeur(document, recordNode, "MeilleurScroreMap", String.valueOf(record.getMeilleurScrore())));
 		recordNode.appendChild(
 				formaterValeur(document, recordNode, "MeilleurTempsMap", String.valueOf(record.getMeilleurTemps())));
+
+		return recordNode;
+	}
+	
+	private static Node formaterRecordJoueur(Document document, RecordNiveau record) {
+		Element recordNode = document.createElement("RECORD");
+
+		recordNode.appendChild(formaterValeur(document, recordNode, "ID_JOUEUR", record.getIdJoueur()));
+		recordNode.appendChild(formaterValeur(document, recordNode, "NOM_JOUEUR", record.getNomJoueur()));
+		recordNode.appendChild(
+				formaterValeur(document, recordNode, "MeilleurScroreJoueur", String.valueOf(record.getMeilleurScrore())));
+		recordNode.appendChild(
+				formaterValeur(document, recordNode, "MeilleurTempsJoueur", String.valueOf(record.getMeilleurTemps())));
 
 		return recordNode;
 	}

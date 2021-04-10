@@ -14,7 +14,7 @@ public class Joueur {
 	private final String nomFichier;
 	private final String id;
 	private final String nom;
-	private List<MeilleurScoreNiveau> listeRecord;
+	private List<RecordJoueur> listeRecord;
 
 	public Joueur(String nomFichier, String id, String nom) {
 		this.nomFichier = nomFichier;
@@ -23,13 +23,13 @@ public class Joueur {
 		listeRecord = new ArrayList<>(maxElement);
 	}
 
-	public void ajouterRecord(MeilleurScoreNiveau record) throws Exception {
+	public void ajouterRecord(RecordJoueur record) throws Exception {
 		boolean trouver = false;
 		if (record == null) {
 			throw new Exception("Record null");
 		}
 
-		for (MeilleurScoreNiveau i : listeRecord) {
+		for (RecordJoueur i : listeRecord) {
 			if (i.getId().equals(record.getId())) {
 				i.setMeilleurScrore(record.getMeilleurScrore());
 				i.setMeilleurTemps(record.getMeilleurScrore());
@@ -46,9 +46,9 @@ public class Joueur {
 		}
 	}
 	
-	public MeilleurScoreNiveau suprimerRecord(String id) throws Exception {
-		MeilleurScoreNiveau recordSupp = null;
-		for (MeilleurScoreNiveau i : listeRecord) {
+	public RecordJoueur suprimerRecord(String id) throws Exception {
+		RecordJoueur recordSupp = null;
+		for (RecordJoueur i : listeRecord) {
 			if (i.getId().equals(id)) {
 				recordSupp = i;
 			}
@@ -82,7 +82,7 @@ public class Joueur {
 		return nom;
 	}
 
-	public List<MeilleurScoreNiveau> getListeRecord() {
+	public List<RecordJoueur> getListeRecord() {
 		return listeRecord;
 	}
 
