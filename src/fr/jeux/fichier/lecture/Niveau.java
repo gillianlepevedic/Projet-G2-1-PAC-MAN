@@ -1,4 +1,4 @@
-package fr.jeux.niveau;
+package fr.jeux.fichier.lecture;
 
 /**
  * 
@@ -10,7 +10,7 @@ public class Niveau {
 	private final String id;
 	private final String nom;
 	private Map map;
-	private RecordNiveau recordNiveau;
+	private Record record;
 
 	public Niveau(String nomFichier, String id, String nom) {
 		this.nomFichier = nomFichier;
@@ -18,7 +18,7 @@ public class Niveau {
 		this.nom = nom;
 
 		this.map = new Map();
-		this.recordNiveau = null;
+		this.record = null;
 
 	}
 
@@ -26,26 +26,26 @@ public class Niveau {
 		this.map.setMap(map.getMap());
 	}
 
-	public void setRecordNiveau(RecordNiveau recordNiveau) throws Exception {
+	public void setRecordNiveau(Record record) throws Exception {
 
-		if (recordNiveau == null) {
+		if (record == null) {
 			throw new Exception("Erreur : record Niveau null");
 		}
 
-		if (this.recordNiveau == null) {
-			this.recordNiveau = recordNiveau;
+		if (this.record == null) {
+			this.record = record;
 		} else {
 
-			if (this.recordNiveau.getMeilleurScrore() > recordNiveau.getMeilleurScrore()) {
+			if (this.record.getMeilleurScrore() > record.getMeilleurScrore()) {
 				throw new Exception("Erreur : meilleur score moins bon");
 			}
 
-			if (this.recordNiveau.getIdJoueur() == recordNiveau.getIdJoueur()) {
-				this.recordNiveau.setNomJoueur(recordNiveau.getNomJoueur());
-				this.recordNiveau.setMeilleurScrore(recordNiveau.getMeilleurScrore());
-				this.recordNiveau.setMeilleurTemps(recordNiveau.getMeilleurTemps());
+			if (this.record.getId() == record.getId()) {
+				this.record.setNom(record.getNom());
+				this.record.setMeilleurScrore(record.getMeilleurScrore());
+				this.record.setMeilleurTemps(record.getMeilleurTemps());
 			} else {
-				this.recordNiveau = recordNiveau;
+				this.record = record;
 			}
 		}
 	}
@@ -69,8 +69,8 @@ public class Niveau {
 	/**
 	 * @return the recordNiveau
 	 */
-	public RecordNiveau getRecordNiveau() {
-		return recordNiveau;
+	public Record getRecordNiveau() {
+		return record;
 	}
 
 	@Override
@@ -119,7 +119,7 @@ public class Niveau {
 	@Override
 	public String toString() {
 		return "Niveau \n	nomFichier=" + nomFichier + "\n	id=" + id + "\n	nom=" + nom + "\n	map=	" + map
-				+ "\n	recordNiveau=" + recordNiveau + "\n";
+				+ "\n	recordNiveau=" + record + "\n";
 	}
 
 }

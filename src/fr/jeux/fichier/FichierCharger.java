@@ -1,11 +1,11 @@
-package fr.jeux.lectureFichier;
+package fr.jeux.fichier;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.jeux.joueur.Joueur;
-import fr.jeux.joueur.RecordJoueur;
-import fr.jeux.niveau.Niveau;
+import fr.jeux.fichier.lecture.Joueur;
+import fr.jeux.fichier.lecture.Niveau;
+import fr.jeux.fichier.lecture.Record;
 
 /**
  * 
@@ -178,7 +178,7 @@ public class FichierCharger {
 	 * @param record
 	 * @throws Exception Si le record est null. Si il est impossible d'ajouter
 	 */
-	public void ajouterRecordJoueur(RecordJoueur record) throws Exception {
+	public void ajouterRecordJoueur(Record record) throws Exception {
 
 		if (record == null) {
 			throw new Exception("Erreur : record null");
@@ -194,7 +194,7 @@ public class FichierCharger {
 	 * @return retourne le record supprimer
 	 * @throws Exception si id est null. Si impossible de le supprimer
 	 */
-	public RecordJoueur supprimerRecordJoueur(String idRecordsupp) throws Exception {
+	public Record supprimerRecordJoueur(String idRecordsupp) throws Exception {
 
 		if (idRecordsupp == null) {
 			throw new Exception("Erreur : id null");

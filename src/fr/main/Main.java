@@ -1,7 +1,6 @@
 package fr.main;
 
-import fr.jeux.joueur.RecordJoueur;
-import fr.jeux.lectureFichier.FichierCharger;
+import fr.jeux.fichier.FichierCharger;
 
 public class Main {
 	private static FichierCharger jeux;
@@ -9,7 +8,7 @@ public class Main {
 	public static void main(String[] args) {
 		jeux = new FichierCharger();
 		try {
-			jeux.ajouterNiveau("./fic/niveau1.pac");
+			jeux.ajouterNiveau("./fic/niveau2.pac");
 			//jeux.chargerJoueur("./fic/joueur1.pac");
 			//jeux.ajouterNiveau("./fic/niveau2.pac");
 			//jeux.chargerJoueur("./fic/joueur2.pac");

@@ -1,4 +1,4 @@
-package fr.jeux.niveau;
+package fr.jeux.fichier.lecture;
 
 import java.util.Arrays;
 
@@ -11,11 +11,11 @@ public class Map {
 	public final static int longueurMap = 31;
 	public final static int largeurMap = 25;
 	public final static int mur = 0;
-	public final static int couloir = 1;
-	public final static int spawn = 2;
+	public final static int spawn = 1;
+	public final static int couloir = 2;
 	public final static int superPacGomme = 3;
 	public final static int pacGommeFruit = 4;
-	public final static int verificationMap = 6;
+	public final static int verificationMap = -1;
 
 	private int[][] map;
 
@@ -33,13 +33,19 @@ public class Map {
 	 * @throws Exception Si la map n'est pas valide
 	 */
 	public void setMap(int[][] mapInt) throws Exception {
-		this.map = mapInt;
+		int[][] save = new int[Map.largeurMap][Map.longueurMap];
 
-		if (!mapEstValide()) {
-			this.map = null;
+		for (int largeur = 0; largeur < Map.largeurMap; largeur++) {
+			for (int longeur = 0; longeur < Map.longueurMap; longeur++) {
+				save[largeur][longeur] = mapInt[largeur][longeur];
+			}
+		}
+
+		if (!mapEstValide(mapInt)) {
 			throw new Exception("Erreur : changement map impossible (nouvelle map pas valide)");
 		}
 
+		this.map = save;
 	}
 
 	/**
@@ -48,133 +54,124 @@ public class Map {
 	 * 
 	 * @return true si la map est valide. false sinon.
 	 */
-	private boolean mapEstValide() {
-		if (this.map == null) {
+	private boolean mapEstValide(int[][] mapInt) {
+		if (mapInt == null) {
 			return false;
 		}
-		
 
-		if (this.map.length != Map.largeurMap) {
+		if (mapInt.length != Map.largeurMap) {
 			return false;
 		}
 
 		for (int i = 0; i < Map.largeurMap; i++) {
-			if (this.map[i].length != Map.longueurMap) {
+			if (mapInt[i].length != Map.longueurMap) {
 				return false;
 			}
 		}
 
 		for (int i = 0; i < Map.largeurMap; i++) {
-			if (this.map[i][0] != Map.mur || this.map[i][Map.longueurMap - 1] != Map.mur) {
+			if (mapInt[i][0] != Map.mur || mapInt[i][Map.longueurMap - 1] != Map.mur) {
 				return false;
 			}
 		}
 
 		for (int longeur = 0; longeur < Map.longueurMap; longeur++) {
-			if (this.map[0][longeur] != Map.mur || this.map[Map.largeurMap - 1][longeur] != Map.mur) {
+			if (mapInt[0][longeur] != Map.mur || mapInt[Map.largeurMap - 1][longeur] != Map.mur) {
 				return false;
 
 			}
 		}
 
-		if (!mapIlotCentral()) {
+		if (!mapIlotCentral(mapInt)) {
 			return false;
 		}
 
-		if (!mapEstContinue()) {
+		if (!mapEstContinue(mapInt)) {
 			return false;
 		}
 
 		return true;
 	}
 
-	private boolean mapIlotCentral() {
+	private boolean mapIlotCentral(int[][] mapInt) {
 		for (int i = (Map.longueurMap / 2) - 1; i <= (Map.longueurMap / 2) + 1; i++) {
-			if (this.map[((Map.largeurMap) / 2)][i] != Map.spawn) {
+			if (mapInt[((Map.largeurMap) / 2)][i] != Map.spawn) {
 				return false;
 			}
 		}
 
 		for (int i = (Map.longueurMap / 2) - 2; i <= (Map.longueurMap / 2) + 2; i++) {
 			if (i != 15) {
-				if (this.map[((Map.largeurMap) / 2) - 1][i] != Map.mur
-						|| this.map[((Map.largeurMap) / 2) + 1][i] != Map.mur) {
+				if (mapInt[((Map.largeurMap) / 2) - 1][i] != Map.mur
+						|| mapInt[((Map.largeurMap) / 2) + 1][i] != Map.mur) {
 					return false;
 				}
-			} else if (this.map[((Map.largeurMap) / 2) - 1][i] != Map.spawn
-					|| this.map[((Map.largeurMap) / 2) + 1][i] != Map.mur) {
+			} else if (mapInt[((Map.largeurMap) / 2) - 1][i] != Map.spawn
+					|| mapInt[((Map.largeurMap) / 2) + 1][i] != Map.mur) {
 				return false;
 			}
 
 		}
 
-		if (this.map[10][15] != 1) {
+		if (mapInt[Map.largeurMap / 2 - 2][Map.longueurMap / 2] != Map.couloir) {
 			return false;
 		}
 
-		if (this.map[(Map.largeurMap) / 2][(Map.longueurMap / 2) - 2] != Map.mur
-				|| this.map[(Map.largeurMap) / 2][(Map.longueurMap / 2) + 2] != Map.mur) {
+		if (mapInt[(Map.largeurMap) / 2][(Map.longueurMap / 2) - 2] != Map.mur
+				|| mapInt[(Map.largeurMap) / 2][(Map.longueurMap / 2) + 2] != Map.mur) {
 			return false;
 		}
 
 		return true;
 	}
 
-	private boolean mapEstContinue() {
+	private boolean mapEstContinue(int[][] mapInt) {
 		Integer[] depart = new Integer[2];
 		depart[0] = 10;
 		depart[1] = 15;
 
-		successeur(depart);
+		successeur(depart, mapInt);
 
 		for (int largeur = 0; largeur < Map.largeurMap; largeur++) {
 			for (int longeur = 0; longeur < Map.longueurMap; longeur++) {
-				if (this.map[largeur][longeur] == Map.couloir) {
+				if (mapInt[largeur][longeur] >= Map.couloir) {
 					return false;
 				}
 			}
 		}
-
-		for (int largeur = 0; largeur < Map.largeurMap; largeur++) {
-			for (int longeur = 0; longeur < Map.longueurMap; longeur++) {
-				if (this.map[largeur][longeur] == Map.verificationMap) {
-					this.map[largeur][longeur] = 1;
-				}
-			}
-		}
-
 		return true;
+		
 	}
 
-	private void successeur(Integer[] predecesseur) {
-		this.map[predecesseur[0]][predecesseur[1]] = Map.verificationMap;
+	private void successeur(Integer[] predecesseur, int[][] mapInt) {
+		mapInt[predecesseur[0]][predecesseur[1]] = Map.verificationMap;
 
-		if (this.map[predecesseur[0] + 1][predecesseur[1]] == Map.couloir) {
+		if (mapInt[predecesseur[0] + 1][predecesseur[1]] >= Map.couloir) {
 			Integer[] bas = new Integer[2];
 			bas[0] = predecesseur[0] + 1;
 			bas[1] = predecesseur[1];
-			successeur(bas);
+			successeur(bas, mapInt);
 		}
 
-		if (this.map[predecesseur[0] - 1][predecesseur[1]] == Map.couloir) {
+		if (mapInt[predecesseur[0] - 1][predecesseur[1]] >= Map.couloir) {
 			Integer[] haut = new Integer[2];
 			haut[0] = predecesseur[0] - 1;
 			haut[1] = predecesseur[1];
-			successeur(haut);
+			successeur(haut, mapInt);
 		}
 
-		if (this.map[predecesseur[0]][predecesseur[1] + 1] == Map.couloir) {
+		if (mapInt[predecesseur[0]][predecesseur[1] + 1] >= Map.couloir) {
 			Integer[] droite = new Integer[2];
 			droite[0] = predecesseur[0];
 			droite[1] = predecesseur[1] + 1;
-			successeur(droite);
+			successeur(droite, mapInt);
 		}
 
-		if (this.map[predecesseur[0]][predecesseur[1] - 1] == Map.couloir) {
+		if (mapInt[predecesseur[0]][predecesseur[1] - 1] >= Map.couloir) {
 			Integer[] gauche = new Integer[2];
 			gauche[0] = predecesseur[0];
 			gauche[1] = predecesseur[1] - 1;
-			successeur(gauche);
+			successeur(gauche, mapInt);
 		}
 
 	}

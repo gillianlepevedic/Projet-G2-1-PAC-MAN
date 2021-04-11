@@ -1,4 +1,4 @@
-package fr.jeux.lectureFichier;
+package fr.jeux.fichier;
 
 import java.io.File;
 
@@ -15,11 +15,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import fr.jeux.joueur.Joueur;
-import fr.jeux.joueur.RecordJoueur;
-import fr.jeux.niveau.Map;
-import fr.jeux.niveau.Niveau;
-import fr.jeux.niveau.RecordNiveau;
+import fr.jeux.fichier.lecture.Joueur;
+import fr.jeux.fichier.lecture.Map;
+import fr.jeux.fichier.lecture.Niveau;
+import fr.jeux.fichier.lecture.Record;
 
 /**
  * Classe technique Lit et ecrit des fichiers .pac en XML Les fichiers doivent
@@ -60,17 +59,12 @@ public class GestionFichierXML {
 
 		map.setMap(lireMap(doc.getElementsByTagName("MAP")));
 		niveau.setMap(map);
-		
-		
-		
-		
+
 		try {
 			NodeList nodeList = doc.getElementsByTagName("RECORD");
-			RecordNiveau record = lireRecordNiveau(nodeList.item(0));
+			Record record = lireRecord(nodeList.item(0));
 			niveau.setRecordNiveau(record);
-			//niveau.setRecordNiveau(record);
-			
-			
+
 		} catch (Exception e) {
 			System.out.println(e);
 			System.out.println("Imposible de lire partie optionnel");
@@ -106,11 +100,11 @@ public class GestionFichierXML {
 		nom = lectureNom(doc.getElementsByTagName("NOM"));
 		joueur = new Joueur(nomFichier, id, nom);
 
-		NodeList nodeList = doc.getElementsByTagName("Record");
+		NodeList nodeList = doc.getElementsByTagName("RECORD");
 		if (nodeList.getLength() > 0) {
 			for (int numRecord = 0; numRecord < nodeList.getLength(); numRecord++) {
 				try {
-					joueur.ajouterRecord(lireRecordJoueur(doc.getElementsByTagName("Record").item(numRecord)));
+					joueur.ajouterRecord(lireRecord(nodeList.item(numRecord)));
 				} catch (Exception e) {
 					System.out.println(e);
 					System.out.println("Imposible de lire partie optionnel");
@@ -141,10 +135,9 @@ public class GestionFichierXML {
 			rootElement.appendChild(formaterValeur(document, rootElement, "ID", niveau.getId()));
 			rootElement.appendChild(formaterValeur(document, rootElement, "NOM", niveau.getNom()));
 			rootElement.appendChild(formaterMap(document, niveau.getMap()));
-			
-			rootElement.appendChild(formaterRecordJoueur(document, niveau.getRecordNiveau()));
-			
-			
+
+			rootElement.appendChild(formaterRecord(document, niveau.getRecordNiveau()));
+
 			document.appendChild(rootElement);
 
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -175,7 +168,7 @@ public class GestionFichierXML {
 			rootElement.appendChild(formaterValeur(document, rootElement, "NOM", joueur.getNom()));
 
 			for (int numRecord = 0; numRecord < joueur.getListeRecord().size(); numRecord++) {
-				rootElement.appendChild(formaterRecordNiveau(document, joueur.getListeRecord().get(numRecord)));
+				rootElement.appendChild(formaterRecord(document, joueur.getListeRecord().get(numRecord)));
 
 			}
 
@@ -278,37 +271,6 @@ public class GestionFichierXML {
 
 		return map;
 	}
-	
-	/**
-	 * Verifie si le RECORD lu repond au critere
-	 * 
-	 * @param recordNode
-	 * @return MeilleurScoreNiveau sinon renvoie Null
-	 */
-	private static RecordNiveau lireRecordNiveau(Node recordNode) {
-		RecordNiveau recordNiveau = null;
-
-		try {
-			String id = null;
-			Element recordElement = (Element) recordNode;
-			id = lectureID(recordElement.getElementsByTagName("ID_JOUEUR"));
-			
-
-			recordNiveau = new RecordNiveau(id);
-
-			recordNiveau.setNomJoueur(lectureNom(recordElement.getElementsByTagName("NOM_JOUEUR")));
-			
-			recordNiveau.setMeilleurScrore(lectureScore(recordElement.getElementsByTagName("MeilleurScroreJoueur")));
-			
-			recordNiveau.setMeilleurTemps(lectureTemps(recordElement.getElementsByTagName("MeilleurTempsJoueur")));
-			
-		} catch (Exception e) {
-			System.out.println(e);
-			System.out.println("record ilisible");
-			recordNiveau = null;
-		}
-		return recordNiveau;
-	}
 
 	/**
 	 * Verifie si le RECORD lu repond au critere
@@ -316,19 +278,19 @@ public class GestionFichierXML {
 	 * @param recordNode
 	 * @return MeilleurScoreNiveau sinon renvoie Null
 	 */
-	private static RecordJoueur lireRecordJoueur(Node recordNode) {
-		RecordJoueur record = null;
+	private static Record lireRecord(Node recordNode) {
+		Record record = null;
 
 		try {
 			String id = null;
 			Element recordElement = (Element) recordNode;
-			id = lectureID(recordElement.getElementsByTagName("ID_JOUEUR"));
+			id = lectureID(recordElement.getElementsByTagName("ID"));
 
-			record = new RecordJoueur(id);
+			record = new Record(id);
 
-			record.setNomNiveau(lectureNom(recordElement.getElementsByTagName("NOM_MAP")));
-			record.setMeilleurScrore(lectureScore(recordElement.getElementsByTagName("MeilleurScroreJoueur")));
-			record.setMeilleurTemps(lectureTemps(recordElement.getElementsByTagName("MeilleurTempsJoueur")));
+			record.setNom(lectureNom(recordElement.getElementsByTagName("NOM")));
+			record.setMeilleurScrore(lectureScore(recordElement.getElementsByTagName("MEILLEUR_SCORE")));
+			record.setMeilleurTemps(lectureTemps(recordElement.getElementsByTagName("MEILLEUR_TEMPS")));
 
 		} catch (Exception e) {
 			System.out.println(e);
@@ -385,28 +347,15 @@ public class GestionFichierXML {
 	 * @param record
 	 * @return
 	 */
-	private static Node formaterRecordNiveau(Document document, RecordJoueur record) {
-		Element recordNode = document.createElement("Record");
-
-		recordNode.appendChild(formaterValeur(document, recordNode, "ID_MAP", record.getId()));
-		recordNode.appendChild(formaterValeur(document, recordNode, "NOM_MAP", record.getNomNiveau()));
-		recordNode.appendChild(
-				formaterValeur(document, recordNode, "MeilleurScroreMap", String.valueOf(record.getMeilleurScrore())));
-		recordNode.appendChild(
-				formaterValeur(document, recordNode, "MeilleurTempsMap", String.valueOf(record.getMeilleurTemps())));
-
-		return recordNode;
-	}
-	
-	private static Node formaterRecordJoueur(Document document, RecordNiveau record) {
+	private static Node formaterRecord(Document document, Record record) {
 		Element recordNode = document.createElement("RECORD");
 
-		recordNode.appendChild(formaterValeur(document, recordNode, "ID_JOUEUR", record.getIdJoueur()));
-		recordNode.appendChild(formaterValeur(document, recordNode, "NOM_JOUEUR", record.getNomJoueur()));
+		recordNode.appendChild(formaterValeur(document, recordNode, "ID", record.getId()));
+		recordNode.appendChild(formaterValeur(document, recordNode, "NOM", record.getNom()));
 		recordNode.appendChild(
-				formaterValeur(document, recordNode, "MeilleurScroreJoueur", String.valueOf(record.getMeilleurScrore())));
+				formaterValeur(document, recordNode, "MEILLEUR_SCORE", String.valueOf(record.getMeilleurScrore())));
 		recordNode.appendChild(
-				formaterValeur(document, recordNode, "MeilleurTempsJoueur", String.valueOf(record.getMeilleurTemps())));
+				formaterValeur(document, recordNode, "MEILLEUR_TEMPS", String.valueOf(record.getMeilleurTemps())));
 
 		return recordNode;
 	}

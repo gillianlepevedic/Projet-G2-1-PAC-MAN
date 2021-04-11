@@ -1,13 +1,13 @@
-package fr.jeux.joueur;
+package fr.jeux.fichier.lecture;
 
 /**
  * 
  * @author gillian
  *
  */
-public class RecordJoueur {
-	final private String id;
-	private String nomNiveau;
+public class Record {
+	private final String id;
+	private String nom;
 	private int meilleurScrore;
 	private int meilleurTemps;
 
@@ -16,9 +16,9 @@ public class RecordJoueur {
 	 * 
 	 * @param id impossible a changer apres
 	 */
-	public RecordJoueur(String id) {
+	public Record(String id) {
 		this.id = id;
-		this.nomNiveau = "N/A";
+		this.nom = "N/A";
 		this.meilleurScrore = 0;
 		this.meilleurTemps = 0;
 	}
@@ -26,30 +26,30 @@ public class RecordJoueur {
 	/**
 	 * Constructeur complet
 	 * 
-	 * @param id             imposible a changer apres
-	 * @param nomNiveau
+	 * @param idJoueur
+	 * @param nomJoueur
 	 * @param meilleurScrore
 	 * @param meilleurTemps
 	 */
-	public RecordJoueur(String id, String nomNiveau, int meilleurScrore, int meilleurTemps) {
+	public Record(String id, String nom, int meilleurScrore, int meilleurTemps) {
 		this.id = id;
-		this.nomNiveau = nomNiveau;
+		this.nom = nom;
 		this.meilleurScrore = meilleurScrore;
 		this.meilleurTemps = meilleurTemps;
 	}
 
 	/**
-	 * Methode pour changer le nom du niveau record
+	 * Methode pour changer le nom du joueur
 	 * 
-	 * @param nomNiveau
+	 * @param nomJoueur
 	 * @throws Exception si le nom est Null
 	 */
-	public void setNomNiveau(String nomNiveau) throws Exception {
-		if (this.nomNiveau == null) {
+	public void setNom(String nom) throws Exception {
+		if (nom == null) {
 			throw new Exception("Erreur : nom null");
 		}
 
-		this.nomNiveau = nomNiveau;
+		this.nom = nom;
 	}
 
 	/**
@@ -84,20 +84,32 @@ public class RecordJoueur {
 		this.meilleurTemps = meilleurTemps;
 	}
 
-	public int getMeilleurTemps() {
-		return meilleurTemps;
+	/**
+	 * @return the nomJoueur
+	 */
+	public String getNom() {
+		return nom;
 	}
 
+	/**
+	 * @return the idJoueur
+	 */
 	public String getId() {
 		return id;
 	}
 
-	public String getNomNiveau() {
-		return nomNiveau;
-	}
-
+	/**
+	 * @return the meilleurScrore
+	 */
 	public int getMeilleurScrore() {
 		return meilleurScrore;
+	}
+
+	/**
+	 * @return the meilleurTemps
+	 */
+	public int getMeilleurTemps() {
+		return meilleurTemps;
 	}
 
 	@Override
@@ -107,7 +119,7 @@ public class RecordJoueur {
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + meilleurScrore;
 		result = prime * result + meilleurTemps;
-		result = prime * result + ((nomNiveau == null) ? 0 : nomNiveau.hashCode());
+		result = prime * result + ((nom == null) ? 0 : nom.hashCode());
 		return result;
 	}
 
@@ -119,7 +131,7 @@ public class RecordJoueur {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		RecordJoueur other = (RecordJoueur) obj;
+		Record other = (Record) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -129,17 +141,17 @@ public class RecordJoueur {
 			return false;
 		if (meilleurTemps != other.meilleurTemps)
 			return false;
-		if (nomNiveau == null) {
-			if (other.nomNiveau != null)
+		if (nom == null) {
+			if (other.nom != null)
 				return false;
-		} else if (!nomNiveau.equals(other.nomNiveau))
+		} else if (!nom.equals(other.nom))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "\n		id=" + id + "\n		nomNiveau=" + nomNiveau + "\n		meilleurScrore=" + meilleurScrore
+		return "\n		idJoueur=" + id + "\n		nomJoueur=" + nom + "\n		meilleurScrore=" + meilleurScrore
 				+ "\n		meilleurTemps=" + meilleurTemps + "\n		";
 	}
 }
