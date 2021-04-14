@@ -27,6 +27,26 @@ public class FichierCharger {
 	}
 
 	/**
+	 * Permet de charger un joueur grace a son nom de fichier
+	 * 
+	 * @param nomfic
+	 * @return retourne le Joueur si tous va bien
+	 * @throws Exception Si le fichier est ilisible
+	 */
+	public Joueur chargerJoueur(String nomfic) throws Exception {
+		Joueur joueur = GestionFichierXML.lireJoueur(nomfic);
+		if (joueur == null) {
+			throw new Exception("Erreur joueur est null");
+		}
+		if (this.joueurConnecter != null) {
+			throw new Exception("Erreur joueur dejas charger");
+		}
+
+		this.joueurConnecter = joueur;
+		return joueur;
+	}
+
+	/**
 	 * Pour ajouter un niveau grace a sont nom de fichier.
 	 * 
 	 * @param nomfichier
@@ -34,7 +54,7 @@ public class FichierCharger {
 	 * @throws Exception Si le fichier n'est pas lisible. Si la liste de niveau est
 	 *                   complete
 	 */
-	public Niveau ajouterNiveau(String nomfichier) throws Exception {
+	public Niveau chargerNiveau(String nomfichier) throws Exception {
 		Niveau niveau = GestionFichierXML.lireNiveau(nomfichier);
 
 		if (niveau == null) {
@@ -48,6 +68,29 @@ public class FichierCharger {
 		this.niveauCharger.add(niveau);
 
 		return niveau;
+	}
+
+	/**
+	 * Sauvegade dans son fichier le Joueur connecter
+	 * 
+	 * @return retourne le joueur si tous va bien
+	 * @throws Exception Si aucun joueur n'est connecter. Si impossible d'ecrire le
+	 *                   fichier. Si sauvegarde c'est mal passe
+	 */
+	public Joueur sauvegarderJoueur() throws Exception {
+		if (this.joueurConnecter == null) {
+			throw new Exception("Pas de joueur connecte");
+		}
+
+		GestionFichierXML.ecrireJoueur(this.joueurConnecter);
+
+		if (!this.joueurConnecter.equals(GestionFichierXML.lireJoueur(this.joueurConnecter.getNomFichier()))) {
+			throw new Exception("Erreur : sauvegarde different de l'objet");
+		}
+
+		System.out.println("Sauvegarde reussi");
+
+		return this.joueurConnecter;
 	}
 
 	/**
@@ -84,6 +127,27 @@ public class FichierCharger {
 	}
 
 	/**
+	 * Suprime le joueur connecter
+	 * 
+	 * @return retourne le joueur supprmier si tous va bien
+	 * @throws Exception Si la sauvegarde c'est mal passe. Si impossible de siprimer
+	 *                   le Joueur
+	 */
+	public Joueur dechargerJoueur() throws Exception {
+		Joueur joueursupp = sauvegarderJoueur();
+
+		this.joueurConnecter = null;
+
+		if (this.joueurConnecter != null) {
+			throw new Exception("Erreur : impossible de decherger le joueur");
+		}
+
+		System.out.println("Dechargement reussi");
+
+		return joueursupp;
+	}
+
+	/**
 	 * Sauvegarde le fichier et le suprime de la liste apres
 	 * 
 	 * @param id
@@ -109,72 +173,26 @@ public class FichierCharger {
 	}
 
 	/**
-	 * Permet de charger un joueur grace a son nom de fichier
+	 * Ajout d'un record au joueur connecter
 	 * 
-	 * @param nomfic
-	 * @return retourne le Joueur si tous va bien
-	 * @throws Exception Si le fichier est ilisible
+	 * @param record
+	 * @throws Exception Si le record est null. Si il est impossible d'ajouter
 	 */
-	public Joueur chargerJoueur(String nomfic) throws Exception {
-		Joueur joueur = GestionFichierXML.lireJoueur(nomfic);
-		if (joueur == null) {
-			throw new Exception("Erreur joueur est null");
+	public void ajouterRecordJoueur(Record record) throws Exception {
+		if (record == null) {
+			throw new Exception("Erreur : record null");
 		}
-		if (this.joueurConnecter != null) {
-			throw new Exception("Erreur joueur dejas charger");
-		}
-
-		this.joueurConnecter = joueur;
-		return joueur;
+		
+		sauvegarderJoueur();
+		
+		this.joueurConnecter.ajouterRecord(record);
+		
+		sauvegarderJoueur();
 	}
 
 	/**
-	 * Sauvegade dans son fichier le Joueur connecter
-	 * 
-	 * @return retourne le joueur si tous va bien
-	 * @throws Exception Si aucun joueur n'est connecter. Si impossible d'ecrire le
-	 *                   fichier. Si sauvegarde c'est mal passe
-	 * 
-	 */
-	public Joueur sauvegarderJoueur() throws Exception {
-		if (this.joueurConnecter == null) {
-			throw new Exception("Pas de joueur connecte");
-		}
-
-		GestionFichierXML.ecrireJoueur(this.joueurConnecter);
-
-		if (!this.joueurConnecter.equals(GestionFichierXML.lireJoueur(this.joueurConnecter.getNomFichier()))) {
-			throw new Exception("Erreur : sauvegarde different de l'objet");
-		}
-
-		System.out.println("Sauvegarde reussi");
-
-		return this.joueurConnecter;
-	}
-
-	/**
-	 * Suprime le joueur connecter
-	 * 
-	 * @return retourne le joueur supprmier si tous va bien
-	 * @throws Exception Si la sauvegarde c'est mal passe. Si impossible de siprimer
-	 *                   le Joueur
-	 */
-	public Joueur dechargerJoueur() throws Exception {
-		Joueur joueursupp = sauvegarderJoueur();
-
-		this.joueurConnecter = null;
-
-		if (this.joueurConnecter != null) {
-			throw new Exception("Erreur : impossible de decherger le joueur");
-		}
-
-		System.out.println("Dechargement reussi");
-
-		return joueursupp;
-	}
-
-	/**
-	 * Ajout d'un record au Niveau qui coresppend a l'ID. Si la map n'est pas charger 
+	 * Ajout d'un record au Niveau qui coresppend a l'ID. Si la map n'est pas
+	 * charger
 	 * 
 	 * @param record
 	 * @throws Exception Si la map n'est pas charger
@@ -199,21 +217,6 @@ public class FichierCharger {
 	}
 
 	/**
-	 * Ajout d'un record au joueur connecter
-	 * 
-	 * @param record
-	 * @throws Exception Si le record est null. Si il est impossible d'ajouter
-	 */
-	public void ajouterRecordJoueur(Record record) throws Exception {
-
-		if (record == null) {
-			throw new Exception("Erreur : record null");
-		}
-
-		this.joueurConnecter.ajouterRecord(record);
-	}
-
-	/**
 	 * Suprimer un record du joueur connecter grace a l'id du record
 	 * 
 	 * @param idRecordsupp
@@ -221,12 +224,15 @@ public class FichierCharger {
 	 * @throws Exception si id est null. Si impossible de le supprimer
 	 */
 	public Record supprimerRecordJoueur(String idRecordsupp) throws Exception {
-
+		Record recordsupp = null;
 		if (idRecordsupp == null) {
 			throw new Exception("Erreur : id null");
 		}
-
-		return this.joueurConnecter.suprimerRecord(idRecordsupp);
+		
+		sauvegarderJoueur();
+		recordsupp = this.joueurConnecter.suprimerRecord(idRecordsupp);
+		sauvegarderJoueur();
+		return recordsupp;
 	}
 
 	public List<Niveau> getNiveauCharger() {
