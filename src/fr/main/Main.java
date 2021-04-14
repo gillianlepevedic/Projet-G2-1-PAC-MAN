@@ -23,7 +23,9 @@ public class Main {
 
 			//System.out.println(jeux);
 
-			//jeux.dechargerNiveau("0000000019");
+			jeux.dechargerNiveau("0000000019");
+			
+			System.out.println(jeux);
 			//jeux.dechargerNiveau("0000000018");
 			//jeux.dechargerJoueur();
 

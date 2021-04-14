@@ -3,6 +3,7 @@ package fr.jeux.fichier;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.jeux.fichier.lecture.GestionFichierXML;
 import fr.jeux.fichier.lecture.Joueur;
 import fr.jeux.fichier.lecture.Niveau;
 import fr.jeux.fichier.lecture.Record;
@@ -50,7 +51,7 @@ public class FichierCharger {
 	}
 
 	/**
-	 * Permet de suavegarder un niveau dans son fichier grace a son id.
+	 * Permet de sauvegarder un niveau dans son fichier grace a son id.
 	 * 
 	 * @param id composer de 10 caracteres
 	 * @return retourn le niveau sauvegard
@@ -108,7 +109,7 @@ public class FichierCharger {
 	}
 
 	/**
-	 * Permet de charger un joueru grace a son nom de fichier
+	 * Permet de charger un joueur grace a son nom de fichier
 	 * 
 	 * @param nomfic
 	 * @return retourne le Joueur si tous va bien

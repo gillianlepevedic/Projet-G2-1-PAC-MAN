@@ -1,4 +1,4 @@
-package fr.jeux.fichier;
+package fr.jeux.fichier.lecture;
 
 import java.io.File;
 
@@ -15,11 +15,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import fr.jeux.fichier.lecture.Joueur;
-import fr.jeux.fichier.lecture.Map;
-import fr.jeux.fichier.lecture.Niveau;
-import fr.jeux.fichier.lecture.Record;
-
 /**
  * Classe technique Lit et ecrit des fichiers .pac en XML Les fichiers doivent
  * correspond aux caractéristiques des fichiers niveau ou joueur.
@@ -30,10 +25,12 @@ import fr.jeux.fichier.lecture.Record;
 public class GestionFichierXML {
 	/**
 	 * Lit des fichiers niveau. Si le fichier répond aux contraintes obligatoires
-	 * (ID NOM MAP). Le SCORE et TEMPS sont optionnels
+	 * (ID NOM MAP). Si il sont absent ou illisible une exception est crée. Le
+	 * RECORD est optionnel. Si il est ilisible aucun record n'est ajouter.
 	 * 
-	 * @param nomFichier et le chemin pour y acceder
-	 * @return Niveau
+	 * @param Il faut le nom/chemin pour lire le fichier en paramatres.
+	 *           (./fic/nomfichier.pac)
+	 * @return retourne Niveau qui est lu dans le fichier.
 	 * @throws Exception si la partie obligatoire est ilisible
 	 */
 	public static Niveau lireNiveau(String nomFichier) throws Exception {
@@ -75,11 +72,13 @@ public class GestionFichierXML {
 
 	/**
 	 * Lit des fichiers joueur. Si le fichier répond aux contraintes obligatoires
-	 * (ID NOM). Les RECORD sont optionnels
+	 * (ID NOM MAP). Si il sont absent ou illisible une exception est crée. Les
+	 * RECORD sont optionnels si il ne sont pas lu aucun record n'est ajouter.
 	 * 
-	 * @param nomFichier et le chemin pour y acceder
-	 * @return Joueur
-	 * @throws Exception si la partie obligatoire est ilisible
+	 * @param Il faut le nom/chemin pour lire le fichier en paramatres.
+	 *           (./fic/nomfichier.pac)
+	 * @return retourne Joueur qui est lu dans le fichier.
+	 * @throws Exception si la partie obligatoire est ilisible.
 	 */
 	public static Joueur lireJoueur(String nomFichier) throws Exception {
 		Joueur joueur = null;
@@ -119,9 +118,10 @@ public class GestionFichierXML {
 	}
 
 	/**
-	 * Ecrit un niveau sous forme XML.
+	 * Ecrit un Niveau sous forme XML. Il ecrit dans le fichier portant le nom
+	 * "nomfichier". Il ecrit dans l'orde ID , NOM, MAP, RECORD.
 	 * 
-	 * @param niveau
+	 * @param demande en parametres le Niveau que l'on veut ecrire.
 	 */
 	public static void ecrireNiveau(Niveau niveau) {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -132,8 +132,8 @@ public class GestionFichierXML {
 			Document document = dBuilder.newDocument();
 			Element rootElement = document.createElementNS("https://iut-lannion.univ-rennes1.fr/", "Niveau");
 
-			rootElement.appendChild(formaterValeur(document, rootElement, "ID", niveau.getId()));
-			rootElement.appendChild(formaterValeur(document, rootElement, "NOM", niveau.getNom()));
+			rootElement.appendChild(formaterValeur(document, "ID", niveau.getId()));
+			rootElement.appendChild(formaterValeur(document, "NOM", niveau.getNom()));
 			rootElement.appendChild(formaterMap(document, niveau.getMap()));
 
 			rootElement.appendChild(formaterRecord(document, niveau.getRecordNiveau()));
@@ -152,9 +152,10 @@ public class GestionFichierXML {
 	}
 
 	/**
-	 * Ecrit un Joueur sous forme XMl
+	 * Ecrit un Joueur sous forme XML. Il ecrit dans le fichier portant le nom
+	 * "nomfichier". Il ecrit dans l'orde ID , NOM, RECORD.
 	 * 
-	 * @param joueur
+	 * @param demande en parametres le joueur que le veut ecrire.
 	 */
 	public static void ecrireJoueur(Joueur joueur) {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -164,8 +165,8 @@ public class GestionFichierXML {
 			dBuilder = dbFactory.newDocumentBuilder();
 			Document document = dBuilder.newDocument();
 			Element rootElement = document.createElementNS("https://iut-lannion.univ-rennes1.fr/", "Joueur");
-			rootElement.appendChild(formaterValeur(document, rootElement, "ID", joueur.getId()));
-			rootElement.appendChild(formaterValeur(document, rootElement, "NOM", joueur.getNom()));
+			rootElement.appendChild(formaterValeur(document, "ID", joueur.getId()));
+			rootElement.appendChild(formaterValeur(document, "NOM", joueur.getNom()));
 
 			for (int numRecord = 0; numRecord < joueur.getListeRecord().size(); numRecord++) {
 				rootElement.appendChild(formaterRecord(document, joueur.getListeRecord().get(numRecord)));
@@ -184,14 +185,16 @@ public class GestionFichierXML {
 	}
 
 	/**
-	 * Verifie si l'ID lu repond au critere
+	 * La methode recoit une NodeList avec le l'id a lire. Elle le convertit en
+	 * string. Et verifie si l'ID lu repond au critere
 	 * 
-	 * @param idNode
+	 * @param recoit le NodeListe contenant l'ID "idNode".
 	 * @return String id si il est valide
-	 * @throws Exception Si l'ID n'est pas de la bonne taille et contient des
+	 * @throws Exception Si l'ID n'est pas de la bonne taille ou contient des
 	 *                   caracter interdit
 	 */
 	private static String lectureID(NodeList idNode) throws Exception {
+
 		String idString = idNode.item(0).getTextContent();
 		String autorisation = "^[0-9]{10}$";
 
@@ -206,9 +209,10 @@ public class GestionFichierXML {
 	}
 
 	/**
-	 * Verifie si l'NOM lu repond au critere
+	 * La methode recoit une NodeList avec le nom a lire. Elle le convertit en
+	 * string. Et verifie si le NOM lu repond au critere
 	 * 
-	 * @param nomNode
+	 * @param recoit le NodeListe contenant l'NOM "nomNode".
 	 * @return String nom si il est valide
 	 * @throws Exception si contient des caractere interdit
 	 */
@@ -224,11 +228,12 @@ public class GestionFichierXML {
 	}
 
 	/**
-	 * Verifie si la MAP lu repond au critere
+	 * La methode recoit une NodeList avec la map a lire. Elle le convertit en
+	 * tableau a 2 dimention de int. Et verifie si la map lu repond au critere
 	 * 
-	 * @param mapNode
-	 * @return boolean[][] si la map repond au critere
-	 * @throws Exception Si la map n'est pas a la bonne taille, contient des
+	 * @param recoit le NodeListe contenant la map "mapNode".
+	 * @return retourn int[][] si la map repond au critere
+	 * @throws Exception Si la map n'est pas de la bonne taille ou contient des
 	 *                   caracter interdit
 	 */
 	private static int[][] lireMap(NodeList mapNode) throws Exception {
@@ -273,10 +278,11 @@ public class GestionFichierXML {
 	}
 
 	/**
-	 * Verifie si le RECORD lu repond au critere
+	 * La methode recoit une NodeList avec le l'record a lire. Elle le convertit en
+	 * Record. Et verifie si le record lu repond au critere
 	 * 
-	 * @param recordNode
-	 * @return MeilleurScoreNiveau sinon renvoie Null
+	 * @param recoit le Node contenant lr record "recordNode".
+	 * @return retourn le RECORD lu sinon renvoie Null si il est illisible
 	 */
 	private static Record lireRecord(Node recordNode) {
 		Record record = null;
@@ -302,9 +308,10 @@ public class GestionFichierXML {
 	}
 
 	/**
-	 * Verifie si le SCORE lu repond au critere
+	 * La methode recoit une NodeList avec le score a lire. Elle le convertit en
+	 * int. Et verifie si le scrore lu repond au critere
 	 * 
-	 * @param scoreNode
+	 * @param recoit le NodeListe contenant le Score "scoreNode".
 	 * @return
 	 * @throws Exception contient des caracter interdit
 	 */
@@ -314,9 +321,10 @@ public class GestionFichierXML {
 	}
 
 	/**
-	 * Verifie si le TEMPS lu repond au critere
+	 * La methode recoit une NodeList avec le temps a lire. Elle le convertit en
+	 * int. Et verifie si le temps lu repond au critere
 	 * 
-	 * @param scoreNode
+	 * @param recoit le NodeListe contenant le Temps "tempsNode".
 	 * @return
 	 * @throws Exception contient des caracter interdit
 	 */
@@ -325,51 +333,62 @@ public class GestionFichierXML {
 		return Integer.parseInt(tempsString);
 	}
 
-	private static Node formaterMap(Document fichier, int[][] mapBool) {
-		Element mapNode = fichier.createElement("MAP");
+	/**
+	 * Recoit une map de int et le convertit en node pour preparer a l'ecriture sur le
+	 * fichier en XML. sur le "document".
+	 * 
+	 * @param document sur le quelle le record sera mis
+	 * @param mapInt que l'on veut ecrire
+	 * @return retourn le Node avec la map ecrit dessus
+	 */
+	private static Node formaterMap(Document document, int[][] mapInt) {
+		Element mapNode = document.createElement("MAP");
 		String tmp;
 
 		for (int largeur = 0; largeur < Map.largeurMap; largeur++) {
 			tmp = "";
 			for (int longueur = 0; longueur < Map.longueurMap; longueur++) {
-				tmp += String.valueOf(longueur);
+				tmp += String.valueOf(mapInt[largeur][longueur]);
 			}
-			mapNode.appendChild(formaterValeur(fichier, mapNode, ("Ligne" + String.format("%02d", largeur)), tmp));
+			mapNode.appendChild(formaterValeur(document, ("Ligne" + String.format("%02d", largeur)), tmp));
 		}
 
 		return mapNode;
 	}
 
 	/**
-	 * Creer un Node Record et y mets toute les valeurs dedans
+	 * Recoit un record et le convertit en node pour preparer a l'ecriture sur le
+	 * fichier en XML. sur le "document".
 	 * 
-	 * @param document
-	 * @param record
-	 * @return
+	 * 
+	 * @param document sur le quelle le record sera mis
+	 * @param record   que l'on veut ecrir
+	 * @return retourn le Node avec le record ecrit dessus
 	 */
 	private static Node formaterRecord(Document document, Record record) {
 		Element recordNode = document.createElement("RECORD");
 
-		recordNode.appendChild(formaterValeur(document, recordNode, "ID", record.getId()));
-		recordNode.appendChild(formaterValeur(document, recordNode, "NOM", record.getNom()));
+		recordNode.appendChild(formaterValeur(document, "ID", record.getId()));
+		recordNode.appendChild(formaterValeur(document, "NOM", record.getNom()));
 		recordNode.appendChild(
-				formaterValeur(document, recordNode, "MEILLEUR_SCORE", String.valueOf(record.getMeilleurScrore())));
+				formaterValeur(document, "MEILLEUR_SCORE", String.valueOf(record.getMeilleurScrore())));
 		recordNode.appendChild(
-				formaterValeur(document, recordNode, "MEILLEUR_TEMPS", String.valueOf(record.getMeilleurTemps())));
+				formaterValeur(document, "MEILLEUR_TEMPS", String.valueOf(record.getMeilleurTemps())));
 
 		return recordNode;
 	}
 
 	/**
-	 * Foramt le nom et les valeur en format XML
+	 * Recoit un "valeur" et "nom" a ecrire dans le "document". Il convertie la
+	 * valeur en node avec pour nom "nom". le node node est renvoyer en parametres pour etres ajouter aux fichier.
 	 * 
-	 * @param doc
+	 * @param document sur le quelle le valeur sera mis
 	 * @param element
 	 * @param name
 	 * @param value
 	 * @return
 	 */
-	private static Node formaterValeur(Document doc, Element element, String name, String value) {
+	private static Node formaterValeur(Document doc,  String name, String value) {
 		Element node = doc.createElement(name);
 		node.appendChild(doc.createTextNode(value));
 		return node;
