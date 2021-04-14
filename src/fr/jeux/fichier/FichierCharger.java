@@ -174,6 +174,31 @@ public class FichierCharger {
 	}
 
 	/**
+	 * Ajout d'un record au Niveau qui coresppend a l'ID. Si la map n'est pas charger 
+	 * 
+	 * @param record
+	 * @throws Exception Si la map n'est pas charger
+	 */
+	public void ajouterRecordNiveau(String idNiveau, Record record) throws Exception {
+		int index;
+		if (record == null) {
+			throw new Exception("Erreur : record null");
+		}
+
+		Niveau niveauAjout = sauvegardeNiveau(idNiveau);
+
+		if (!this.niveauCharger.contains(niveauAjout)) {
+			throw new Exception("Erreur : niveau pas trouve");
+		}
+
+		index = this.niveauCharger.indexOf(niveauAjout);
+		this.niveauCharger.get(index).setRecordNiveau(record);
+		sauvegardeNiveau(idNiveau);
+
+		this.joueurConnecter.ajouterRecord(record);
+	}
+
+	/**
 	 * Ajout d'un record au joueur connecter
 	 * 
 	 * @param record

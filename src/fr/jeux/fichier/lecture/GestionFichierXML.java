@@ -26,7 +26,7 @@ public class GestionFichierXML {
 	/**
 	 * Lit des fichiers niveau. Si le fichier répond aux contraintes obligatoires
 	 * (ID NOM MAP). Si il sont absent ou illisible une exception est crée. Le
-	 * RECORD est optionnel. Si il est ilisible aucun record n'est ajouter.
+	 * RECORD est optionnel. Si il est ilisible un record N/A est ajouter.
 	 * 
 	 * @param Il faut le nom/chemin pour lire le fichier en paramatres.
 	 *           (./fic/nomfichier.pac)
@@ -50,6 +50,11 @@ public class GestionFichierXML {
 		}
 
 		id = lectureID(doc.getElementsByTagName("ID"));
+
+		if (id.charAt(0) != 'N') {
+			throw new Exception("Erreur : id niveau commence pas par N");
+		}
+
 		nom = lectureNom(doc.getElementsByTagName("NOM"));
 
 		niveau = new Niveau(nomFichier, id, nom);
@@ -60,11 +65,17 @@ public class GestionFichierXML {
 		try {
 			NodeList nodeList = doc.getElementsByTagName("RECORD");
 			Record record = lireRecord(nodeList.item(0));
+
+			if (record.getId().charAt(0) != 'J') {
+				throw new Exception("Erreur : id niveau record commence pas par N");
+			}
+
 			niveau.setRecordNiveau(record);
 
 		} catch (Exception e) {
 			System.out.println(e);
 			System.out.println("Imposible de lire partie optionnel");
+			niveau.setRecordNiveau(new Record("NA"));
 		}
 
 		return niveau;
@@ -84,6 +95,7 @@ public class GestionFichierXML {
 		Joueur joueur = null;
 		String id = null;
 		String nom = null;
+		Record record = null;
 
 		File inputFile = new File(nomFichier);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -96,6 +108,11 @@ public class GestionFichierXML {
 		}
 
 		id = lectureID(doc.getElementsByTagName("ID"));
+
+		if (id.charAt(0) != 'J') {
+			throw new Exception("Erreur : id niveau commence pas par N");
+		}
+
 		nom = lectureNom(doc.getElementsByTagName("NOM"));
 		joueur = new Joueur(nomFichier, id, nom);
 
@@ -103,7 +120,14 @@ public class GestionFichierXML {
 		if (nodeList.getLength() > 0) {
 			for (int numRecord = 0; numRecord < nodeList.getLength(); numRecord++) {
 				try {
-					joueur.ajouterRecord(lireRecord(nodeList.item(numRecord)));
+
+					record = lireRecord(nodeList.item(numRecord));
+
+					if (record.getId().charAt(0) != 'N') {
+						throw new Exception("Erreur : id niveau record commence pas par N");
+					}
+
+					joueur.ajouterRecord(record);
 				} catch (Exception e) {
 					System.out.println(e);
 					System.out.println("Imposible de lire partie optionnel");
@@ -196,9 +220,9 @@ public class GestionFichierXML {
 	private static String lectureID(NodeList idNode) throws Exception {
 
 		String idString = idNode.item(0).getTextContent();
-		String autorisation = "^[0-9]{10}$";
+		String autorisation = "^(N|J){1}[0-9]{10}$";
 
-		if (idString.length() != 10) {
+		if (idString.length() != 11) {
 			throw new Exception("Erreur : ID pas de la bonne taille");
 		}
 		if (!idString.matches(autorisation)) {
@@ -283,26 +307,20 @@ public class GestionFichierXML {
 	 * 
 	 * @param recoit le Node contenant lr record "recordNode".
 	 * @return retourn le RECORD lu sinon renvoie Null si il est illisible
+	 * @throws Exception
 	 */
-	private static Record lireRecord(Node recordNode) {
+	private static Record lireRecord(Node recordNode) throws Exception {
 		Record record = null;
 
-		try {
-			String id = null;
-			Element recordElement = (Element) recordNode;
-			id = lectureID(recordElement.getElementsByTagName("ID"));
+		String id = null;
+		Element recordElement = (Element) recordNode;
+		id = lectureID(recordElement.getElementsByTagName("ID"));
 
-			record = new Record(id);
+		record = new Record(id);
 
-			record.setNom(lectureNom(recordElement.getElementsByTagName("NOM")));
-			record.setMeilleurScrore(lectureScore(recordElement.getElementsByTagName("MEILLEUR_SCORE")));
-			record.setMeilleurTemps(lectureTemps(recordElement.getElementsByTagName("MEILLEUR_TEMPS")));
-
-		} catch (Exception e) {
-			System.out.println(e);
-			System.out.println("record ilisible");
-			record = null;
-		}
+		record.setNom(lectureNom(recordElement.getElementsByTagName("NOM")));
+		record.setMeilleurScrore(lectureScore(recordElement.getElementsByTagName("MEILLEUR_SCORE")));
+		record.setMeilleurTemps(lectureTemps(recordElement.getElementsByTagName("MEILLEUR_TEMPS")));
 
 		return record;
 	}
@@ -334,11 +352,11 @@ public class GestionFichierXML {
 	}
 
 	/**
-	 * Recoit une map de int et le convertit en node pour preparer a l'ecriture sur le
-	 * fichier en XML. sur le "document".
+	 * Recoit une map de int et le convertit en node pour preparer a l'ecriture sur
+	 * le fichier en XML. sur le "document".
 	 * 
 	 * @param document sur le quelle le record sera mis
-	 * @param mapInt que l'on veut ecrire
+	 * @param mapInt   que l'on veut ecrire
 	 * @return retourn le Node avec la map ecrit dessus
 	 */
 	private static Node formaterMap(Document document, int[][] mapInt) {
@@ -370,17 +388,16 @@ public class GestionFichierXML {
 
 		recordNode.appendChild(formaterValeur(document, "ID", record.getId()));
 		recordNode.appendChild(formaterValeur(document, "NOM", record.getNom()));
-		recordNode.appendChild(
-				formaterValeur(document, "MEILLEUR_SCORE", String.valueOf(record.getMeilleurScrore())));
-		recordNode.appendChild(
-				formaterValeur(document, "MEILLEUR_TEMPS", String.valueOf(record.getMeilleurTemps())));
+		recordNode.appendChild(formaterValeur(document, "MEILLEUR_SCORE", String.valueOf(record.getMeilleurScrore())));
+		recordNode.appendChild(formaterValeur(document, "MEILLEUR_TEMPS", String.valueOf(record.getMeilleurTemps())));
 
 		return recordNode;
 	}
 
 	/**
 	 * Recoit un "valeur" et "nom" a ecrire dans le "document". Il convertie la
-	 * valeur en node avec pour nom "nom". le node node est renvoyer en parametres pour etres ajouter aux fichier.
+	 * valeur en node avec pour nom "nom". le node node est renvoyer en parametres
+	 * pour etres ajouter aux fichier.
 	 * 
 	 * @param document sur le quelle le valeur sera mis
 	 * @param element
@@ -388,7 +405,7 @@ public class GestionFichierXML {
 	 * @param value
 	 * @return
 	 */
-	private static Node formaterValeur(Document doc,  String name, String value) {
+	private static Node formaterValeur(Document doc, String name, String value) {
 		Element node = doc.createElement(name);
 		node.appendChild(doc.createTextNode(value));
 		return node;

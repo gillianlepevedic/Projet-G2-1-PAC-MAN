@@ -1,6 +1,7 @@
 package fr.main;
 
 import fr.jeux.fichier.FichierCharger;
+import fr.jeux.fichier.lecture.Record;
 
 public class Main {
 	private static FichierCharger jeux;
@@ -9,7 +10,7 @@ public class Main {
 		jeux = new FichierCharger();
 		try {
 			jeux.ajouterNiveau("./fic/niveau2.pac");
-			//jeux.chargerJoueur("./fic/joueur1.pac");
+			jeux.chargerJoueur("./fic/joueur2.pac");
 			//jeux.ajouterNiveau("./fic/niveau2.pac");
 			//jeux.chargerJoueur("./fic/joueur2.pac");
 			
@@ -21,17 +22,14 @@ public class Main {
 			
 			
 
-			//System.out.println(jeux);
-
-			jeux.dechargerNiveau("0000000019");
+			jeux.dechargerJoueur();
+			jeux.dechargerNiveau("N0000000019");
 			
-			System.out.println(jeux);
-			//jeux.dechargerNiveau("0000000018");
-			//jeux.dechargerJoueur();
 
 		} catch (Exception e) {
 			System.out.println(e);
 		}
+		System.out.println(jeux);
 	}
 	
 }

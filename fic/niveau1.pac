@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <Niveau xmlns="https://iut-lannion.univ-rennes1.fr/">
-    <ID>0000000019</ID>
+    <ID>N000000019</ID>
     <NOM>niveau2</NOM>
     <MAP>
         <Ligne00>0000000000000000000000000000000</Ligne00>

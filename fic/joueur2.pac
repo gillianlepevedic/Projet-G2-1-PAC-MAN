@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <Joueur xmlns="https://iut-lannion.univ-rennes1.fr/">
-    <ID>0000000126</ID>
+    <ID>J0000000126</ID>
     <NOM>Lautres</NOM>
     <RECORD>
-        <ID>0000000153</ID>
+        <ID>N0000000153</ID>
         <NOM>Niveau1</NOM>
         <MEILLEUR_SCORE>12542</MEILLEUR_SCORE>
         <MEILLEUR_TEMPS>56</MEILLEUR_TEMPS>
-    </RECORD>    
+    </RECORD>
     <RECORD>
-        <ID>0000000154</ID>
+        <ID>N0000000154</ID>
         <NOM>Niveau2</NOM>
         <MEILLEUR_SCORE>12542</MEILLEUR_SCORE>
         <MEILLEUR_TEMPS>56</MEILLEUR_TEMPS>
-    </RECORD>    
+    </RECORD>
     <RECORD>
-        <ID>0000000155</ID>
+        <ID>N0000000155</ID>
         <NOM>Niveau3</NOM>
         <MEILLEUR_SCORE>12542</MEILLEUR_SCORE>
         <MEILLEUR_TEMPS>56</MEILLEUR_TEMPS>
-    </RECORD>    
+    </RECORD>
     <RECORD>
-        <ID>0000000156</ID>
+        <ID>N0000000156</ID>
         <NOM>Niveau4</NOM>
         <MEILLEUR_SCORE>12542</MEILLEUR_SCORE>
         <MEILLEUR_TEMPS>56</MEILLEUR_TEMPS>

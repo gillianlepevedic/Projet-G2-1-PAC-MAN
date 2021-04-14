@@ -18,7 +18,7 @@ public class Record {
 	 */
 	public Record(String id) {
 		this.id = id;
-		this.nom = "N/A";
+		this.nom = "NA";
 		this.meilleurScrore = 0;
 		this.meilleurTemps = 0;
 	}
