@@ -22,7 +22,7 @@ import org.w3c.dom.NodeList;
  * @author gillian
  *
  */
-public class GestionFichierXML {
+public class LectureFichierXML {
 	/**
 	 * Lit des fichiers niveau. Si le fichier répond aux contraintes obligatoires
 	 * (ID NOM MAP). Si il sont absent ou illisible une exception est crée. Le
@@ -75,7 +75,7 @@ public class GestionFichierXML {
 		} catch (Exception e) {
 			System.out.println(e);
 			System.out.println("Imposible de lire partie optionnel");
-			niveau.setRecordNiveau(new Record("NA"));
+			niveau.setRecordNiveau(new Record("N A"));
 		}
 
 		return niveau;

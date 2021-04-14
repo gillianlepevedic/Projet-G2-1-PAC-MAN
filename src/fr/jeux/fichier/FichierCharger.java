@@ -3,7 +3,7 @@ package fr.jeux.fichier;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.jeux.fichier.lecture.GestionFichierXML;
+import fr.jeux.fichier.lecture.LectureFichierXML;
 import fr.jeux.fichier.lecture.Joueur;
 import fr.jeux.fichier.lecture.Niveau;
 import fr.jeux.fichier.lecture.Record;
@@ -34,7 +34,7 @@ public class FichierCharger {
 	 * @throws Exception Si le fichier est ilisible
 	 */
 	public Joueur chargerJoueur(String nomfic) throws Exception {
-		Joueur joueur = GestionFichierXML.lireJoueur(nomfic);
+		Joueur joueur = LectureFichierXML.lireJoueur(nomfic);
 		if (joueur == null) {
 			throw new Exception("Erreur joueur est null");
 		}
@@ -55,7 +55,7 @@ public class FichierCharger {
 	 *                   complete
 	 */
 	public Niveau chargerNiveau(String nomfichier) throws Exception {
-		Niveau niveau = GestionFichierXML.lireNiveau(nomfichier);
+		Niveau niveau = LectureFichierXML.lireNiveau(nomfichier);
 
 		if (niveau == null) {
 			throw new Exception("Erreur : Niveau null");
@@ -82,9 +82,9 @@ public class FichierCharger {
 			throw new Exception("Pas de joueur connecte");
 		}
 
-		GestionFichierXML.ecrireJoueur(this.joueurConnecter);
+		LectureFichierXML.ecrireJoueur(this.joueurConnecter);
 
-		if (!this.joueurConnecter.equals(GestionFichierXML.lireJoueur(this.joueurConnecter.getNomFichier()))) {
+		if (!this.joueurConnecter.equals(LectureFichierXML.lireJoueur(this.joueurConnecter.getNomFichier()))) {
 			throw new Exception("Erreur : sauvegarde different de l'objet");
 		}
 
@@ -108,7 +108,7 @@ public class FichierCharger {
 		for (Niveau niveau : niveauCharger) {
 			if (id.equals(niveau.getId())) {
 				niveauSauvegarder = niveau;
-				GestionFichierXML.ecrireNiveau(niveauSauvegarder);
+				LectureFichierXML.ecrireNiveau(niveauSauvegarder);
 				sauvegarder = true;
 			}
 		}
@@ -117,7 +117,7 @@ public class FichierCharger {
 			throw new Exception("Erreur : niveau pas trouver");
 		}
 
-		if (!niveauSauvegarder.equals(GestionFichierXML.lireNiveau(niveauSauvegarder.getNomFichier()))) {
+		if (!niveauSauvegarder.equals(LectureFichierXML.lireNiveau(niveauSauvegarder.getNomFichier()))) {
 			throw new Exception("Erreur : sauvegarde different de l'objet");
 		}
 
