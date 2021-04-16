@@ -1,4 +1,4 @@
-package fr.jeux.fichier.lecture;
+package fr.pacman.zonedejeux.decor;
 
 /**
  * 

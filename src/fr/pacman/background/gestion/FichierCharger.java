@@ -1,12 +1,11 @@
-package fr.jeux.fichier;
+package fr.pacman.background.gestion;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.jeux.fichier.lecture.LectureFichierXML;
-import fr.jeux.fichier.lecture.Joueur;
-import fr.jeux.fichier.lecture.Niveau;
-import fr.jeux.fichier.lecture.Record;
+import fr.pacman.zonedejeux.decor.Joueur;
+import fr.pacman.zonedejeux.decor.Niveau;
+import fr.pacman.zonedejeux.decor.Record;
 
 /**
  * 

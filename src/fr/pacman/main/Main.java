@@ -1,6 +1,6 @@
-package fr.main;
+package fr.pacman.main;
 
-import fr.jeux.fichier.FichierCharger;
+import fr.pacman.background.gestion.FichierCharger;
 
 public class Main {
 	private static FichierCharger jeux;

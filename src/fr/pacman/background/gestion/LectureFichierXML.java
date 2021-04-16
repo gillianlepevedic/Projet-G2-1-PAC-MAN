@@ -1,4 +1,4 @@
-package fr.jeux.fichier.lecture;
+package fr.pacman.background.gestion;
 
 import java.io.File;
 
@@ -14,6 +14,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import fr.pacman.zonedejeux.decor.Joueur;
+import fr.pacman.zonedejeux.decor.Map;
+import fr.pacman.zonedejeux.decor.Niveau;
+import fr.pacman.zonedejeux.decor.Record;
 
 /**
  * Classe technique Lit et ecrit des fichiers .pac en XML Les fichiers doivent

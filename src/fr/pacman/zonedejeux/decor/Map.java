@@ -1,4 +1,4 @@
-package fr.jeux.fichier.lecture;
+package fr.pacman.zonedejeux.decor;
 
 import java.util.Arrays;
 
@@ -10,14 +10,8 @@ import java.util.Arrays;
 public class Map {
 	public final static int longueurMap = 31;
 	public final static int largeurMap = 25;
-	public final static int mur = 0;
-	public final static int spawn = 1;
-	public final static int couloir = 2;
-	public final static int superPacGomme = 3;
-	public final static int pacGommeFruit = 4;
-	public final static int verificationMap = -1;
 
-	private int[][] map;
+	private Block[][] map;
 
 	/**
 	 * Constructeur
@@ -32,16 +26,14 @@ public class Map {
 	 * @param mapInt
 	 * @throws Exception Si la map n'est pas valide
 	 */
-	public void setMap(int[][] mapInt) throws Exception {
-		int[][] save = new int[Map.largeurMap][Map.longueurMap];
+	public void setMap(Block[][] nouvelleMap) throws Exception {
+		Block[][] save = new Block[Map.largeurMap][Map.longueurMap];
+		
+		save= nouvelleMap.clone();
 
-		for (int largeur = 0; largeur < Map.largeurMap; largeur++) {
-			for (int longeur = 0; longeur < Map.longueurMap; longeur++) {
-				save[largeur][longeur] = mapInt[largeur][longeur];
-			}
-		}
 
-		if (!mapEstValide(mapInt)) {
+
+		if (!mapEstValide(nouvelleMap)) {
 			throw new Exception("Erreur : changement map impossible (nouvelle map pas valide)");
 		}
 
@@ -54,7 +46,7 @@ public class Map {
 	 * 
 	 * @return true si la map est valide. false sinon.
 	 */
-	private boolean mapEstValide(int[][] mapInt) {
+	private boolean mapEstValide(Block[][] mapInt) {
 		if (mapInt == null) {
 			return false;
 		}
@@ -70,13 +62,13 @@ public class Map {
 		}
 
 		for (int i = 0; i < Map.largeurMap; i++) {
-			if (mapInt[i][0] != Map.mur || mapInt[i][Map.longueurMap - 1] != Map.mur) {
+			if (mapInt[i][0].getTypeblock() != Block.mur || mapInt[i][Map.longueurMap - 1].getTypeblock() != Block.mur) {
 				return false;
 			}
 		}
 
 		for (int longeur = 0; longeur < Map.longueurMap; longeur++) {
-			if (mapInt[0][longeur] != Map.mur || mapInt[Map.largeurMap - 1][longeur] != Map.mur) {
+			if (mapInt[0][longeur].getTypeblock() != Block.mur || mapInt[Map.largeurMap - 1][longeur].getTypeblock() != Block.mur) {
 				return false;
 
 			}
@@ -93,39 +85,39 @@ public class Map {
 		return true;
 	}
 
-	private boolean mapIlotCentral(int[][] mapInt) {
+	private boolean mapIlotCentral(Block[][] mapInt) {
 		for (int i = (Map.longueurMap / 2) - 1; i <= (Map.longueurMap / 2) + 1; i++) {
-			if (mapInt[((Map.largeurMap) / 2)][i] != Map.spawn) {
+			if (mapInt[((Map.largeurMap) / 2)][i].getTypeblock() != Block.spawn) {
 				return false;
 			}
 		}
 
 		for (int i = (Map.longueurMap / 2) - 2; i <= (Map.longueurMap / 2) + 2; i++) {
 			if (i != 15) {
-				if (mapInt[((Map.largeurMap) / 2) - 1][i] != Map.mur
-						|| mapInt[((Map.largeurMap) / 2) + 1][i] != Map.mur) {
+				if (mapInt[((Map.largeurMap) / 2) - 1][i].getTypeblock() != Block.mur
+						|| mapInt[((Map.largeurMap) / 2) + 1][i].getTypeblock() != Block.mur) {
 					return false;
 				}
-			} else if (mapInt[((Map.largeurMap) / 2) - 1][i] != Map.spawn
-					|| mapInt[((Map.largeurMap) / 2) + 1][i] != Map.mur) {
+			} else if (mapInt[((Map.largeurMap) / 2) - 1][i].getTypeblock() != Block.spawn
+					|| mapInt[((Map.largeurMap) / 2) + 1][i].getTypeblock() != Block.mur) {
 				return false;
 			}
 
 		}
 
-		if (mapInt[Map.largeurMap / 2 - 2][Map.longueurMap / 2] != Map.couloir) {
+		if (mapInt[Map.largeurMap / 2 - 2][Map.longueurMap / 2].getTypeblock() != Block.couloir) {
 			return false;
 		}
 
-		if (mapInt[(Map.largeurMap) / 2][(Map.longueurMap / 2) - 2] != Map.mur
-				|| mapInt[(Map.largeurMap) / 2][(Map.longueurMap / 2) + 2] != Map.mur) {
+		if (mapInt[(Map.largeurMap) / 2][(Map.longueurMap / 2) - 2].getTypeblock() != Block.mur
+				|| mapInt[(Map.largeurMap) / 2][(Map.longueurMap / 2) + 2].getTypeblock() != Block.mur) {
 			return false;
 		}
 
 		return true;
 	}
 
-	private boolean mapEstContinue(int[][] mapInt) {
+	private boolean mapEstContinue(Block[][] mapInt) {
 		Integer[] depart = new Integer[2];
 		depart[0] = 10;
 		depart[1] = 15;
@@ -134,7 +126,7 @@ public class Map {
 
 		for (int largeur = 0; largeur < Map.largeurMap; largeur++) {
 			for (int longeur = 0; longeur < Map.longueurMap; longeur++) {
-				if (mapInt[largeur][longeur] >= Map.couloir) {
+				if (mapInt[largeur][longeur].getTypeblock() >= Block.couloir) {
 					return false;
 				}
 			}
@@ -143,40 +135,40 @@ public class Map {
 		
 	}
 
-	private void successeur(Integer[] predecesseur, int[][] mapInt) {
-		mapInt[predecesseur[0]][predecesseur[1]] = Map.verificationMap;
+	private void successeur(Integer[] predecesseur, Block[][] mapBlock) {
+		mapBlock[predecesseur[0]][predecesseur[1]].setTypeblock(Block.verificationMap);
 
-		if (mapInt[predecesseur[0] + 1][predecesseur[1]] >= Map.couloir) {
+		if (mapBlock[predecesseur[0] + 1][predecesseur[1]].getTypeblock() >= Block.couloir) {
 			Integer[] bas = new Integer[2];
 			bas[0] = predecesseur[0] + 1;
 			bas[1] = predecesseur[1];
-			successeur(bas, mapInt);
+			successeur(bas, mapBlock);
 		}
 
-		if (mapInt[predecesseur[0] - 1][predecesseur[1]] >= Map.couloir) {
+		if (mapBlock[predecesseur[0] - 1][predecesseur[1]].getTypeblock() >= Block.couloir) {
 			Integer[] haut = new Integer[2];
 			haut[0] = predecesseur[0] - 1;
 			haut[1] = predecesseur[1];
-			successeur(haut, mapInt);
+			successeur(haut, mapBlock);
 		}
 
-		if (mapInt[predecesseur[0]][predecesseur[1] + 1] >= Map.couloir) {
+		if (mapBlock[predecesseur[0]][predecesseur[1] + 1].getTypeblock() >= Block.couloir) {
 			Integer[] droite = new Integer[2];
 			droite[0] = predecesseur[0];
 			droite[1] = predecesseur[1] + 1;
-			successeur(droite, mapInt);
+			successeur(droite, mapBlock);
 		}
 
-		if (mapInt[predecesseur[0]][predecesseur[1] - 1] >= Map.couloir) {
+		if (mapBlock[predecesseur[0]][predecesseur[1] - 1].getTypeblock() >= Block.couloir) {
 			Integer[] gauche = new Integer[2];
 			gauche[0] = predecesseur[0];
 			gauche[1] = predecesseur[1] - 1;
-			successeur(gauche, mapInt);
+			successeur(gauche, mapBlock);
 		}
 
 	}
 
-	public int[][] getMap() {
+	public Block[][] getMap() {
 		return map;
 	}
 
