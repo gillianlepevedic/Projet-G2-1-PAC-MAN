@@ -2,7 +2,7 @@ package fr.pacman.zonedejeux.decor;
 
 import java.awt.Image;
 
-import pacman.zonedejeux.ElementGraphique;
+import fr.pacman.zonedejeux.ElementGraphique;
 
 public class Block extends ElementGraphique {
 	public final static int mur = 0;

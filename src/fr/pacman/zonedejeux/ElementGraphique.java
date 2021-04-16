@@ -1,4 +1,4 @@
-package pacman.zonedejeux;
+package fr.pacman.zonedejeux;
 
 import java.awt.Image;
 
